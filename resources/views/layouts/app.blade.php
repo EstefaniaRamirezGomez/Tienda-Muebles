@@ -94,11 +94,24 @@
         th { color: var(--terracota-oscuro); background: #FBF6F1; }
         .estrella { color: var(--terracota); }
         .vacio { color: #8A7B70; font-style: italic; }
+
+        .logo-inicio {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .logo-inicio:hover {
+            color: var(--arena);
+        }
     </style>
 </head>
 <body>
     <header>
-        <h1>🪑 Muebles &amp; Decoración</h1>
+        <h1>
+            <a href="{{ route('inicio') }}" class="logo-inicio">
+                🪑 Muebles &amp; Decoración
+            </a>
+        </h1>
         <nav>
             <a href="{{ route('productos.index') }}">Catálogo</a>
             <a href="{{ route('ambientes.index') }}">Ambientes</a>
