@@ -37,7 +37,7 @@ class DatabaseSeeder extends Seeder
             ->mapWithKeys(fn ($nombre) => [$nombre => Ambiente::create(['nombre' => $nombre])]);
 
         $datos = [
-            ['Sofá Nórdico 3 puestos', 'Sofás', 'Sala', 1890000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqAt3inXQXUeJl7YAIa4Yiqh8ry6FMr7gKlQbF3IsnFQ&s=10','Tela', 'Gris', 210, 85, 90, 45, true, 24],
+            ['Sofá Nórdico 3 puestos', 'Sofás', 'Sala', 1890000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqAt3inXQXUeJl7YAIa4Yiqh8ry6FMr7gKlQbF3IsnFQ&s=10', 'Tela', 'Gris', 210, 85, 90, 45, true, 24],
             ['Sofá Chaise Longue', 'Sofás', 'Sala', 2350000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSh6oVsuuhnxwhbYiPzNbWH_mYMbfNPVxbetuW-l_liUA&s=10', 'Cuero sintético', 'Café', 260, 80, 160, 60, true, 24],
             ['Mesa de Centro Roble', 'Mesas', 'Sala', 680000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRA1Z322ekhz_lCiMm4hb366PyjEdR6WPRoTKYQoIA2Rg&s=10', 'Madera de roble', 'Natural', 110, 45, 60, 18, false, 12],
             ['Mesa Comedor Extensible', 'Mesas', 'Cocina', 1450000, 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQWuzmwK5zEvbbF5O3_t7u5VSoeEgiZFE5AW9YFuFkUbw&s=10', 'Madera MDF', 'Blanco', 160, 75, 90, 35, true, 18],

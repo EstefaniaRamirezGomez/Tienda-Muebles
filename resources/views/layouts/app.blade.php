@@ -103,6 +103,38 @@
         .logo-inicio:hover {
             color: var(--arena);
         }
+
+        /* Sesión en el menú */
+        nav { display: flex; align-items: center; flex-wrap: wrap; }
+        .saludo { color: #fff; margin-left: 1.2rem; font-size: 0.9rem; }
+        .form-salir { display: inline; margin-left: 1.2rem; }
+        .form-salir button {
+            background: none;
+            border: 1px solid var(--arena);
+            color: var(--arena);
+            border-radius: 6px;
+            padding: 0.25rem 0.7rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+        .form-salir button:hover { background: var(--arena); color: var(--terracota-oscuro); }
+
+        /* Formularios de login y registro */
+        .formulario-auth { max-width: 420px; margin: 1rem auto; }
+        .formulario-auth h2 { margin-top: 0; }
+        .formulario-auth label { display: block; margin: 0.9rem 0 0.3rem; font-size: 0.9rem; }
+        .formulario-auth input[type="text"],
+        .formulario-auth input[type="email"],
+        .formulario-auth input[type="password"] {
+            width: 100%;
+            padding: 0.55rem;
+            border: 1px solid #CFC5BB;
+            border-radius: 6px;
+        }
+        .formulario-auth .check { display: flex; gap: 0.4rem; align-items: center; }
+        .formulario-auth .boton { margin-top: 1.2rem; width: 100%; }
+        .error { color: #B3261E; font-size: 0.85rem; margin: 0.3rem 0 0; }
+        .pie-auth { text-align: center; font-size: 0.9rem; margin-bottom: 0; }
     </style>
 </head>
 <body>
@@ -116,6 +148,20 @@
             <a href="{{ route('productos.index') }}">Catálogo</a>
             <a href="{{ route('ambientes.index') }}">Ambientes</a>
             <a href="{{ route('productos.destacados') }}">Destacados</a>
+
+            @auth
+                @if (auth()->user()->esAdmin())
+                    <a href="{{ route('admin.inicio') }}">{{ __('app.panel_admin') }}</a>
+                @endif
+                <span class="saludo">{{ __('app.hola', ['nombre' => auth()->user()->name]) }}</span>
+                <form method="POST" action="{{ route('logout') }}" class="form-salir">
+                    @csrf
+                    <button type="submit">{{ __('app.cerrar_sesion') }}</button>
+                </form>
+            @else
+                <a href="{{ route('login') }}">{{ __('app.iniciar_sesion') }}</a>
+                <a href="{{ route('register') }}">{{ __('app.registrarse') }}</a>
+            @endauth
         </nav>
     </header>
     <main>

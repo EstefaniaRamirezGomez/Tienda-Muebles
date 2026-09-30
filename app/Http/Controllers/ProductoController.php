@@ -58,32 +58,32 @@ class ProductoController extends Controller
         return view('productos.destacados', compact('masVendidos', 'mejorCalificados'));
     }
 
-   public function comparar(Request $request): View
-{
-    $crudo = $request->query('ids', []);
+    public function comparar(Request $request): View
+    {
+        $crudo = $request->query('ids', []);
 
-    $ids = is_array($crudo)
-        ? collect($crudo)
-        : collect(explode(',', (string) $crudo));
+        $ids = is_array($crudo)
+            ? collect($crudo)
+            : collect(explode(',', (string) $crudo));
 
-    $ids = $ids->filter()->map(fn ($id) => (int) $id)->unique()->take(3);
+        $ids = $ids->filter()->map(fn ($id) => (int) $id)->unique()->take(3);
 
-    $productos = Producto::with(['especificacion', 'categoria'])
-        ->whereIn('id', $ids)
-        ->get();
+        $productos = Producto::with(['especificacion', 'categoria'])
+            ->whereIn('id', $ids)
+            ->get();
 
-    $totalSolicitados = $productos->count();
+        $totalSolicitados = $productos->count();
 
-    // Solo se compara dentro de la misma categoría (un sofá contra una
-    // lámpara no aporta nada). Se toma la categoría del primer producto
-    // y se descarta cualquier otro que no coincida.
-    if ($productos->isNotEmpty()) {
-        $categoriaId = $productos->first()->categoria_id;
-        $productos = $productos->filter(fn ($p) => $p->categoria_id === $categoriaId)->values();
+        // Solo se compara dentro de la misma categoría (un sofá contra una
+        // lámpara no aporta nada). Se toma la categoría del primer producto
+        // y se descarta cualquier otro que no coincida.
+        if ($productos->isNotEmpty()) {
+            $categoriaId = $productos->first()->categoria_id;
+            $productos = $productos->filter(fn ($p) => $p->categoria_id === $categoriaId)->values();
+        }
+
+        $huboDescartados = $productos->count() < $totalSolicitados;
+
+        return view('productos.comparar', compact('productos', 'huboDescartados'));
     }
-
-    $huboDescartados = $productos->count() < $totalSolicitados;
-
-    return view('productos.comparar', compact('productos', 'huboDescartados'));
-}
 }
