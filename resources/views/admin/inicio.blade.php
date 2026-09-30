@@ -1,30 +1,65 @@
 {{-- Autor: Estefanía Ramírez Gómez --}}
+
 @extends('layouts.admin')
 
-@section('titulo', __('app.admin_inicio'))
+@section('titulo', 'Inicio')
 
 @section('contenido')
-    <h2>{{ __('app.admin_titulo') }}</h2>
-    <p>{{ __('app.admin_bienvenida', ['nombre' => auth()->user()->name]) }}</p>
+
+    <h2>
+        Panel de administración
+    </h2>
+
+    <p>
+        Gestiona la información principal de la tienda.
+    </p>
 
     <div class="metricas">
+
         <div class="metrica">
-            <span>{{ __('app.admin_productos') }}</span>
-            <strong>{{ $resumen['productos'] }}</strong>
+            <span>
+                Productos
+            </span>
+
+            <strong>
+                {{ $resumen['productos'] }}
+            </strong>
         </div>
+
         <div class="metrica">
-            <span>{{ __('app.admin_categorias') }}</span>
-            <strong>{{ $resumen['categorias'] }}</strong>
+            <span>
+                Categorías
+            </span>
+
+            <strong>
+                {{ $resumen['categorias'] }}
+            </strong>
         </div>
+
         <div class="metrica">
-            <span>{{ __('app.admin_pedidos') }}</span>
-            <strong>{{ $resumen['pedidos'] }}</strong>
+            <span>
+                Pedidos
+            </span>
+
+            <strong>
+                {{ $resumen['pedidos'] }}
+            </strong>
         </div>
+
         <div class="metrica">
-            <span>{{ __('app.admin_clientes') }}</span>
-            <strong>{{ $resumen['clientes'] }}</strong>
+            <span>
+                Clientes
+            </span>
+
+            <strong>
+                {{ $resumen['clientes'] }}
+            </strong>
         </div>
+
     </div>
 
-    <p class="aviso">{{ __('app.admin_proximamente') }}</p>
+    <p class="aviso">
+        Utiliza el menú lateral para administrar los productos de la tienda.
+    </p>
+
 @endsection

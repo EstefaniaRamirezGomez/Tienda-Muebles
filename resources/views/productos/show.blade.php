@@ -3,46 +3,260 @@
 @section('titulo', $producto->nombre)
 
 @section('contenido')
-    <a href="{{ route('productos.index') }}">&larr; Volver al catálogo</a>
+
+    <a href="{{ route('productos.index') }}">
+        &larr; Volver al catálogo
+    </a>
+
+    @if (session('exito'))
+        <div class="mensaje-exito" style="margin-top:1rem;">
+            {{ session('exito') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="mensaje-error" style="margin-top:1rem;">
+            {{ session('error') }}
+        </div>
+    @endif
 
     <div class="tarjeta" style="margin-top:1rem;">
-        <span class="etiqueta">{{ $producto->categoria->nombre }}</span>
-        <span class="etiqueta">{{ $producto->ambiente->nombre }}</span>
 
-        <img src="{{ $producto->imagen ?? 'https://placehold.co/600x400?text=Sin+imagen' }}"
-         alt="{{ $producto->nombre }}"
-         style="width:100%; max-width:400px; border-radius:8px; margin:1rem 0;">
+        <span class="etiqueta">
+            {{ $producto->categoria->nombre }}
+        </span>
 
-        <h2>{{ $producto->nombre }}</h2>
-        <p>{{ $producto->descripcion }}</p>
-        <p class="precio" style="font-size:1.3rem;">${{ number_format($producto->precio, 0, ',', '.') }}</p>
-        <p>Stock disponible: {{ $producto->stock }} · Calificación promedio:
-            <span class="estrella">★ {{ $producto->calificacionPromedio() }}</span>
+        <span class="etiqueta">
+            {{ $producto->ambiente->nombre }}
+        </span>
+
+        <img
+            src="{{ $producto->imagen ?? 'https://placehold.co/600x400?text=Sin+imagen' }}"
+            alt="{{ $producto->nombre }}"
+            style="
+                width:100%;
+                max-width:400px;
+                border-radius:8px;
+                margin:1rem 0;
+            "
+        >
+
+        <h2>
+            {{ $producto->nombre }}
+        </h2>
+
+        <p>
+            {{ $producto->descripcion }}
         </p>
 
+        <p
+            class="precio"
+            style="font-size:1.3rem;"
+        >
+            ${{ number_format($producto->precio, 0, ',', '.') }}
+        </p>
+
+        <p>
+            Stock disponible: {{ $producto->stock }}
+
+            · Calificación promedio:
+
+            <span class="estrella">
+                ★ {{ $producto->calificacionPromedio() }}
+            </span>
+        </p>
+
+        {{-- ===============================
+             CARRITO
+        =============================== --}}
+
+        @auth
+
+            @if ($producto->stock > 0)
+
+                <form
+                    action="{{ route('carrito.agregar', $producto) }}"
+                    method="POST"
+                    style="
+                        margin-top:1rem;
+                        margin-bottom:1.5rem;
+                        display:flex;
+                        gap:0.5rem;
+                        align-items:center;
+                        flex-wrap:wrap;
+                    "
+                >
+
+                    @csrf
+
+                    <label for="cantidad">
+                        Cantidad:
+                    </label>
+
+                    <input
+                        type="number"
+                        id="cantidad"
+                        name="cantidad"
+                        value="1"
+                        min="1"
+                        max="{{ $producto->stock }}"
+                        style="
+                            width:80px;
+                            padding:0.55rem;
+                            border:1px solid #CFC5BB;
+                            border-radius:6px;
+                        "
+                        required
+                    >
+
+                    <button
+                        type="submit"
+                        class="boton"
+                    >
+                        Agregar al carrito
+                    </button>
+
+                </form>
+
+            @else
+
+                <p class="vacio">
+                    Este producto está agotado.
+                </p>
+
+            @endif
+
+        @else
+
+            <div style="margin:1rem 0 1.5rem;">
+
+                <a
+                    href="{{ route('login') }}"
+                    class="boton"
+                >
+                    Inicia sesión para agregar al carrito
+                </a>
+
+            </div>
+
+        @endauth
+
+        {{-- ===============================
+             FICHA TÉCNICA
+        =============================== --}}
+
         @if ($producto->especificacion)
-            <h3>Ficha técnica</h3>
+
+            <h3>
+                Ficha técnica
+            </h3>
+
             <table>
-                <tr><th>Material</th><td>{{ $producto->especificacion->material }}</td></tr>
-                <tr><th>Color</th><td>{{ $producto->especificacion->color }}</td></tr>
-                <tr><th>Dimensiones (A x Al x P)</th>
-                    <td>{{ $producto->especificacion->ancho_cm }} x {{ $producto->especificacion->alto_cm }} x {{ $producto->especificacion->profundidad_cm }} cm</td></tr>
-                <tr><th>Peso</th><td>{{ $producto->especificacion->peso_kg }} kg</td></tr>
-                <tr><th>Requiere ensamblaje</th><td>{{ $producto->especificacion->requiere_ensamblaje ? 'Sí' : 'No' }}</td></tr>
-                <tr><th>Garantía</th><td>{{ $producto->especificacion->garantia_meses }} meses</td></tr>
+
+                <tr>
+                    <th>Material</th>
+
+                    <td>
+                        {{ $producto->especificacion->material }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Color</th>
+
+                    <td>
+                        {{ $producto->especificacion->color }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Dimensiones (A x Al x P)</th>
+
+                    <td>
+                        {{ $producto->especificacion->ancho_cm }}
+                        x
+                        {{ $producto->especificacion->alto_cm }}
+                        x
+                        {{ $producto->especificacion->profundidad_cm }}
+                        cm
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Peso</th>
+
+                    <td>
+                        {{ $producto->especificacion->peso_kg }} kg
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Requiere ensamblaje</th>
+
+                    <td>
+                        {{ $producto->especificacion->requiere_ensamblaje
+                            ? 'Sí'
+                            : 'No' }}
+                    </td>
+                </tr>
+
+                <tr>
+                    <th>Garantía</th>
+
+                    <td>
+                        {{ $producto->especificacion->garantia_meses }}
+                        meses
+                    </td>
+                </tr>
+
             </table>
-            <a class="boton boton-secundario" style="margin-top:0.8rem;"
-               href="{{ route('productos.comparar', ['ids' => $producto->id]) }}">
+
+            <a
+                class="boton boton-secundario"
+                style="margin-top:0.8rem;"
+                href="{{ route('productos.comparar', ['ids' => $producto->id]) }}"
+            >
                 Comparar este producto
             </a>
+
         @endif
 
-        <h3>Reseñas</h3>
+        {{-- ===============================
+             RESEÑAS
+        =============================== --}}
+
+        <h3>
+            Reseñas
+        </h3>
+
         @forelse ($producto->resenas as $resena)
-            <p><strong>{{ $resena->usuario->name }}</strong> — <span class="estrella">{{ str_repeat('★', $resena->calificacion) }}</span><br>
-                {{ $resena->comentario }}</p>
+
+            <p>
+
+                <strong>
+                    {{ $resena->usuario->name }}
+                </strong>
+
+                —
+
+                <span class="estrella">
+                    {{ str_repeat('★', $resena->calificacion) }}
+                </span>
+
+                <br>
+
+                {{ $resena->comentario }}
+
+            </p>
+
         @empty
-            <p class="vacio">Todavía no tiene reseñas.</p>
+
+            <p class="vacio">
+                Todavía no tiene reseñas.
+            </p>
+
         @endforelse
+
     </div>
+
 @endsection
