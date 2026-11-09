@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Producto extends Model
 {
     protected $fillable = [
-        'nombre', 'descripcion', 'imagen', 'precio', 'stock', 'categoria_id', 'ambiente_id',
+        'nombre', 'nombre_en', 'descripcion', 'descripcion_en', 'imagen', 'precio', 'stock', 'categoria_id', 'ambiente_id',
     ];
 
     protected $casts = [
@@ -55,5 +55,19 @@ class Producto extends Model
     public function calificacionPromedio(): float
     {
         return round($this->resenas()->avg('calificacion') ?? 0, 1);
+    }
+
+    public function getNombreLocalizadoAttribute(): string
+    {
+        return app()->getLocale() === 'en'
+            ? ($this->nombre_en ?: $this->nombre)
+            : $this->nombre;
+    }
+
+    public function getDescripcionLocalizadaAttribute(): ?string
+    {
+        return app()->getLocale() === 'en'
+            ? ($this->descripcion_en ?: $this->descripcion)
+            : $this->descripcion;
     }
 }

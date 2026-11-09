@@ -1,12 +1,40 @@
 @extends('layouts.app')
 
-@section('titulo', 'Catálogo')
+@section('titulo', app()->getLocale() === 'en' ? 'Catalog' : 'Catálogo')
 
 @section('contenido')
 
-    <h2>Catálogo de productos</h2>
+    @php
+        $ingles = app()->getLocale() === 'en';
 
-    {{-- Mensajes --}}
+        $normalizar = function ($valor) {
+            return str_replace(
+                [' ', '-'],
+                '_',
+                \Illuminate\Support\Str::ascii(
+                    mb_strtolower(trim($valor))
+                )
+            );
+        };
+
+        $traducirRelacion = function ($nombre, $tipo, $alternativa) use ($normalizar) {
+            if (!$nombre) {
+                return $alternativa;
+            }
+
+            $clave = 'messages.' . $tipo . '.' . $normalizar($nombre);
+
+            return \Illuminate\Support\Facades\Lang::has($clave)
+                ? __($clave)
+                : $nombre;
+        };
+    @endphp
+
+    <h2>
+        {{ $ingles ? 'Product Catalog' : 'Catálogo de productos' }}
+    </h2>
+
+    {{-- MENSAJES --}}
     @if (session('exito'))
         <div class="mensaje-exito">
             {{ session('exito') }}
@@ -19,7 +47,7 @@
         </div>
     @endif
 
-    {{-- Buscador --}}
+    {{-- BUSCADOR --}}
     <form
         action="{{ route('productos.buscar') }}"
         method="GET"
@@ -29,15 +57,13 @@
             type="search"
             name="q"
             value="{{ $termino ?? '' }}"
-            placeholder="Buscar por nombre... (ej: sofá)"
+            placeholder="{{ $ingles ? 'Search by name... (e.g. sofa)' : 'Buscar por nombre... (ej: sofá)' }}"
+            aria-label="{{ $ingles ? 'Search products' : 'Buscar productos' }}"
             style="width:280px;"
         >
 
-        <button
-            type="submit"
-            class="boton"
-        >
-            Buscar
+        <button type="submit" class="boton">
+            {{ $ingles ? 'Search' : 'Buscar' }}
         </button>
 
         @if (!empty($termino))
@@ -45,219 +71,357 @@
                 href="{{ route('productos.index') }}"
                 class="boton boton-secundario"
             >
-                Limpiar
+                {{ $ingles ? 'Clear' : 'Limpiar' }}
             </a>
         @endif
     </form>
 
-    @if (isset($termino) && $productos->isEmpty())
-        <p class="vacio">
-            No se encontraron productos para "{{ $termino }}".
-        </p>
-    @endif
-
-    {{-- Comparación de productos --}}
-    <form
-        action="{{ route('productos.comparar') }}"
-        method="GET"
-        id="form-comparar"
-    >
+    {{-- MENSAJE CUANDO NO HAY PRODUCTOS --}}
+    @if ($productos->isEmpty())
 
         <p class="vacio">
-            Marca entre 2 y 3 productos de la misma categoría para comparar su ficha técnica.
+            @if (!empty($termino))
+                {{ $ingles
+                    ? 'No products found for'
+                    : 'No se encontraron productos para' }}
+                "{{ $termino }}".
+            @else
+                {{ $ingles
+                    ? 'There are no products available in the catalog.'
+                    : 'No hay productos disponibles en el catálogo.' }}
+            @endif
         </p>
 
-        <div class="grid">
+    @else
 
-            @foreach ($productos as $producto)
+        {{-- COMPARACIÓN DE PRODUCTOS --}}
+        <div id="form-comparar">
 
-                <div class="producto-card">
+            <p class="vacio">
+                {{ $ingles
+                    ? 'Select 2 or 3 products to compare their specifications.'
+                    : 'Marca entre 2 y 3 productos para comparar su ficha técnica.' }}
+            </p>
 
-                    {{-- Checkbox para comparar --}}
-                    <label
-                        style="
-                            display:flex;
-                            align-items:center;
-                            gap:0.4rem;
-                            margin-bottom:0.5rem;
-                            font-weight:600;
-                        "
-                    >
-                        <input
-                            type="checkbox"
-                            name="ids[]"
-                            value="{{ $producto->id }}"
-                            class="check-comparar"
-                            data-categoria="{{ $producto->categoria_id }}"
+            <div class="grid">
+
+                @foreach ($productos as $producto)
+
+                    @php
+                        $nombreTraducido = $producto->nombre_localizado;
+
+                        $categoriaTraducida = $traducirRelacion(
+                            $producto->categoria?->nombre,
+                            'categories',
+                            $ingles ? 'No category' : 'Sin categoría'
+                        );
+
+                        $ambienteTraducido = $traducirRelacion(
+                            $producto->ambiente?->nombre,
+                            'rooms',
+                            $ingles ? 'No room' : 'Sin ambiente'
+                        );
+                    @endphp
+
+                    <div class="producto-card">
+
+                        {{-- SELECCIONAR PARA COMPARAR --}}
+                        <label
+                            style="
+                                display:flex;
+                                align-items:center;
+                                gap:0.4rem;
+                                margin-bottom:0.5rem;
+                                font-weight:600;
+                            "
                         >
-
-                        Comparar
-                    </label>
-
-                    {{-- Imagen --}}
-                    <img
-                        src="{{ $producto->imagen ?? 'https://placehold.co/400x300?text=Sin+imagen' }}"
-                        alt="{{ $producto->nombre }}"
-                        style="
-                            width:100%;
-                            height:140px;
-                            object-fit:cover;
-                            border-radius:6px;
-                            margin-bottom:0.5rem;
-                        "
-                    >
-
-                    {{-- Categoría --}}
-                    <span class="etiqueta">
-                        {{ $producto->categoria->nombre }}
-                    </span>
-
-                    {{-- Ambiente --}}
-                    <span class="etiqueta">
-                        {{ $producto->ambiente->nombre }}
-                    </span>
-
-                    {{-- Nombre --}}
-                    <h3>
-                        {{ $producto->nombre }}
-                    </h3>
-
-                    {{-- Precio --}}
-                    <p class="precio">
-                        ${{ number_format($producto->precio, 0, ',', '.') }}
-                    </p>
-
-                    {{-- Stock --}}
-                    <p style="font-size:0.85rem;">
-                        Stock disponible: {{ $producto->stock }}
-                    </p>
-
-                    {{-- Ver detalle --}}
-                    <a
-                        href="{{ route('productos.show', $producto) }}"
-                        class="boton"
-                    >
-                        Ver detalle
-                    </a>
-
-                    {{-- Carrito --}}
-                    @auth
-
-                        @if ($producto->stock > 0)
-
-                            <form
-                                action="{{ route('carrito.agregar', $producto) }}"
-                                method="POST"
-                                style="margin-top:0.5rem;"
+                            <input
+                                type="checkbox"
+                                name="ids[]"
+                                value="{{ $producto->id }}"
+                                class="check-comparar"
                             >
 
-                                @csrf
+                            {{ $ingles ? 'Compare' : 'Comparar' }}
+                        </label>
 
-                                <input
-                                    type="hidden"
-                                    name="cantidad"
-                                    value="1"
+                        {{-- IMAGEN --}}
+                        <img
+                            src="{{ $producto->imagen ?: 'https://placehold.co/400x300?text=Sin+imagen' }}"
+                            alt="{{ $nombreTraducido }}"
+                            loading="lazy"
+                            style="
+                                width:100%;
+                                height:140px;
+                                object-fit:cover;
+                                border-radius:6px;
+                                margin-bottom:0.5rem;
+                            "
+                        >
+
+                        {{-- CATEGORÍA --}}
+                        <span class="etiqueta">
+                            {{ $categoriaTraducida }}
+                        </span>
+
+                        {{-- AMBIENTE --}}
+                        <span class="etiqueta">
+                            {{ $ambienteTraducido }}
+                        </span>
+
+                        {{-- NOMBRE TRADUCIDO --}}
+                        <h3>
+                            {{ $nombreTraducido }}
+                        </h3>
+
+                        {{-- PRECIO --}}
+                        <p class="precio">
+                            ${{ number_format($producto->precio, 0, ',', '.') }}
+                        </p>
+
+                        {{-- STOCK --}}
+                        <p style="font-size:0.85rem;">
+                            {{ $ingles ? 'Available stock:' : 'Stock disponible:' }}
+                            {{ $producto->stock }}
+                        </p>
+
+                        {{-- VER DETALLE --}}
+                        <a
+                            href="{{ route('productos.show', $producto) }}"
+                            class="boton"
+                        >
+                            {{ $ingles ? 'View details' : 'Ver detalle' }}
+                        </a>
+
+                        {{-- CARRITO --}}
+                        @auth
+
+                            @if ($producto->stock > 0)
+
+                                <form
+                                    action="{{ route('carrito.agregar', $producto) }}"
+                                    method="POST"
+                                    style="margin-top:0.5rem;"
                                 >
+                                    @csrf
 
-                                <button
-                                    type="submit"
-                                    class="boton"
-                                >
-                                    Agregar al carrito
-                                </button>
+                                    <input
+                                        type="hidden"
+                                        name="cantidad"
+                                        value="1"
+                                    >
 
-                            </form>
+                                    <button
+                                        type="submit"
+                                        class="boton"
+                                    >
+                                        {{ $ingles
+                                            ? 'Add to cart'
+                                            : 'Agregar al carrito' }}
+                                    </button>
+                                </form>
+
+                            @else
+
+                                <p class="vacio">
+                                    {{ $ingles
+                                        ? 'Out of stock'
+                                        : 'Producto agotado' }}
+                                </p>
+
+                            @endif
 
                         @else
 
-                            <p class="vacio">
-                                Producto agotado
-                            </p>
+                            <a
+                                href="{{ route('login') }}"
+                                class="boton boton-secundario"
+                                style="margin-top:0.5rem;"
+                            >
+                                {{ $ingles
+                                    ? 'Log in to purchase'
+                                    : 'Inicia sesión para comprar' }}
+                            </a>
 
-                        @endif
+                        @endauth
 
-                    @else
+                    </div>
 
-                        <a
-                            href="{{ route('login') }}"
-                            class="boton boton-secundario"
-                            style="margin-top:0.5rem;"
-                        >
-                            Inicia sesión para comprar
-                        </a>
+                @endforeach
 
-                    @endauth
+            </div>
 
-                </div>
-
-            @endforeach
+            {{-- BOTÓN DE COMPARACIÓN --}}
+            <button
+                type="button"
+                class="boton"
+                style="margin-top:1rem;"
+                id="btn-comparar"
+                disabled
+            >
+                {{ $ingles
+                    ? 'Compare selected products'
+                    : 'Comparar seleccionados' }}
+            </button>
 
         </div>
 
-        {{-- Botón comparar --}}
-        <button
-            type="submit"
-            class="boton"
-            style="margin-top:1rem;"
-            id="btn-comparar"
-            disabled
+        {{-- PAGINACIÓN --}}
+        @if ($productos->hasPages())
+
+            <nav
+                aria-label="{{ $ingles ? 'Product pagination' : 'Paginación de productos' }}"
+                style="
+                    display:flex;
+                    justify-content:center;
+                    align-items:center;
+                    flex-wrap:wrap;
+                    gap:1rem;
+                    margin:2rem 0;
+                "
+            >
+
+                {{-- PÁGINA ANTERIOR --}}
+                @if ($productos->onFirstPage())
+
+                    <span
+                        class="boton boton-secundario"
+                        style="opacity:0.5;"
+                    >
+                        {{ $ingles ? 'Previous' : 'Anterior' }}
+                    </span>
+
+                @else
+
+                    <a
+                        href="{{ $productos->previousPageUrl() }}"
+                        class="boton boton-secundario"
+                    >
+                        {{ $ingles ? 'Previous' : 'Anterior' }}
+                    </a>
+
+                @endif
+
+                {{-- PÁGINA ACTUAL --}}
+                <span style="font-weight:600;">
+                    {{ $ingles ? 'Page' : 'Página' }}
+                    {{ $productos->currentPage() }}
+                    {{ $ingles ? 'of' : 'de' }}
+                    {{ $productos->lastPage() }}
+                </span>
+
+                {{-- PÁGINA SIGUIENTE --}}
+                @if ($productos->hasMorePages())
+
+                    <a
+                        href="{{ $productos->nextPageUrl() }}"
+                        class="boton boton-secundario"
+                    >
+                        {{ $ingles ? 'Next' : 'Siguiente' }}
+                    </a>
+
+                @else
+
+                    <span
+                        class="boton boton-secundario"
+                        style="opacity:0.5;"
+                    >
+                        {{ $ingles ? 'Next' : 'Siguiente' }}
+                    </span>
+
+                @endif
+
+            </nav>
+
+        @endif
+
+        {{-- INFORMACIÓN DE RESULTADOS --}}
+        <p
+            style="
+                text-align:center;
+                font-size:0.85rem;
+                margin-bottom:1.5rem;
+            "
         >
-            Comparar seleccionados
-        </button>
+            {{ $ingles ? 'Showing' : 'Mostrando' }}
+            {{ $productos->firstItem() }}
+            {{ $ingles ? 'to' : 'a' }}
+            {{ $productos->lastItem() }}
+            {{ $ingles ? 'of' : 'de' }}
+            {{ $productos->total() }}
+            {{ $ingles ? 'products' : 'productos' }}
+        </p>
 
-    </form>
+    @endif
 
+    {{-- JAVASCRIPT PARA COMPARACIÓN --}}
     <script>
-        const casillas = document.querySelectorAll('.check-comparar');
-        const boton = document.getElementById('btn-comparar');
+        document.addEventListener('DOMContentLoaded', function () {
 
-        function categoriaSeleccionada() {
-            const marcada =
-                document.querySelector('.check-comparar:checked');
+            const casillas = document.querySelectorAll('.check-comparar');
+            const boton = document.getElementById('btn-comparar');
 
-            return marcada
-                ? marcada.dataset.categoria
-                : null;
-        }
+            if (!boton) {
+                return;
+            }
 
-        function actualizarBoton() {
+            function obtenerSeleccionados() {
+                return Array.from(
+                    document.querySelectorAll('.check-comparar:checked')
+                );
+            }
 
-            const marcados =
-                document.querySelectorAll(
-                    '.check-comparar:checked'
-                ).length;
+            function actualizarBoton() {
 
-            const catSel =
-                categoriaSeleccionada();
+                const seleccionados = obtenerSeleccionados();
+                const cantidad = seleccionados.length;
 
-            boton.disabled =
-                marcados < 2;
+                // Permitir entre 2 y 3 productos
+                boton.disabled = cantidad < 2 || cantidad > 3;
 
-            casillas.forEach(c => {
+                casillas.forEach(function (casilla) {
 
-                if (c.checked) {
+                    // Mantener habilitados los productos marcados
+                    if (casilla.checked) {
+                        casilla.disabled = false;
+                        return;
+                    }
+
+                    // Bloquear nuevos productos solo al llegar a 3
+                    casilla.disabled = cantidad >= 3;
+
+                });
+            }
+
+            casillas.forEach(function (casilla) {
+                casilla.addEventListener('change', actualizarBoton);
+            });
+
+            boton.addEventListener('click', function () {
+
+                const seleccionados = obtenerSeleccionados();
+
+                if (
+                    seleccionados.length < 2 ||
+                    seleccionados.length > 3
+                ) {
                     return;
                 }
 
-                const otraCategoria =
-                    catSel !== null &&
-                    c.dataset.categoria !== catSel;
+                const url = new URL(
+                    @json(route('productos.comparar')),
+                    window.location.origin
+                );
 
-                const limiteAlcanzado =
-                    marcados >= 3;
+                seleccionados.forEach(function (casilla) {
+                    url.searchParams.append('ids[]', casilla.value);
+                });
 
-                c.disabled =
-                    otraCategoria ||
-                    limiteAlcanzado;
+                window.location.href = url.toString();
             });
-        }
 
-        casillas.forEach(c =>
-            c.addEventListener(
-                'change',
-                actualizarBoton
-            )
-        );
+            actualizarBoton();
+        });
     </script>
 
 @endsection

@@ -1,0 +1,50 @@
+<?php
+
+return [
+    'home' => 'Home',
+    'products' => 'Products',
+    'featured' => 'Featured',
+    'cart' => 'Cart',
+    'login' => 'Log in',
+    'logout' => 'Log out',
+    'admin' => 'Administration',
+    'welcome' => 'Welcome to our furniture store',
+    'search' => 'Search',
+    'search_placeholder' => 'What are you looking for?',
+    'price' => 'Price',
+    'stock' => 'Availability',
+    'details' => 'View details',
+    'add_to_cart' => 'Add to cart',
+    'reports' => 'Inventory reports',
+    'download_csv' => 'Download CSV',
+    'download_json' => 'Download JSON',
+
+    'hero_title' => 'Furniture for every space',
+    'hero_description' => 'Find furniture and decor to transform every space in your home.',
+    'view_catalog' => 'View catalog',
+    'explore_rooms' => 'Explore rooms',
+    'view_all' => 'View all',
+    'no_products' => 'No products available.',
+    'no_category' => 'Uncategorized',
+    'no_room' => 'No room',
+    'no_image' => 'No image',
+
+    'categories' => [
+        'sofas' => 'Sofas',
+        'mesas' => 'Tables',
+        'lamparas' => 'Lamps',
+        'sillas' => 'Chairs',
+        'camas' => 'Beds',
+        'escritorios' => 'Desks',
+        'armarios' => 'Wardrobes',
+    ],
+
+    'rooms' => [
+        'dormitorio' => 'Bedroom',
+        'sala' => 'Living room',
+        'oficina' => 'Office',
+        'comedor' => 'Dining room',
+        'cocina' => 'Kitchen',
+        'bano' => 'Bathroom',
+    ],
+];

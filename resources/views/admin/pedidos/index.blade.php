@@ -1,0 +1,291 @@
+@extends('layouts.admin')
+
+@section('titulo', app()->getLocale() === 'en'
+    ? 'Order Management'
+    : 'Gestión de pedidos'
+)
+
+@section('contenido')
+
+@php
+    $ingles = app()->getLocale() === 'en';
+
+    $estados = [
+        'pendiente' => [
+            'es' => 'Pendiente',
+            'en' => 'Pending',
+            'color' => '#92400e',
+            'fondo' => '#fef3c7',
+        ],
+        'preparando' => [
+            'es' => 'En preparación',
+            'en' => 'Preparing',
+            'color' => '#1d4ed8',
+            'fondo' => '#dbeafe',
+        ],
+        'en_preparacion' => [
+            'es' => 'En preparación',
+            'en' => 'Preparing',
+            'color' => '#1d4ed8',
+            'fondo' => '#dbeafe',
+        ],
+        'enviado' => [
+            'es' => 'Enviado',
+            'en' => 'Shipped',
+            'color' => '#6d28d9',
+            'fondo' => '#ede9fe',
+        ],
+        'entregado' => [
+            'es' => 'Entregado',
+            'en' => 'Delivered',
+            'color' => '#166534',
+            'fondo' => '#dcfce7',
+        ],
+        'cancelado' => [
+            'es' => 'Cancelado',
+            'en' => 'Cancelled',
+            'color' => '#991b1b',
+            'fondo' => '#fee2e2',
+        ],
+    ];
+@endphp
+
+<div style="max-width: 1200px; margin: 0 auto;">
+
+    {{-- ENCABEZADO --}}
+    <div style="
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    ">
+
+        <div>
+            <h1 style="margin-bottom: 0.5rem;">
+                {{ $ingles ? 'Order Management' : 'Gestión de pedidos' }}
+            </h1>
+
+            <p style="color: #6b7280;">
+                {{ $ingles
+                    ? 'Review customer orders and manage their delivery status.'
+                    : 'Consulta los pedidos de los clientes y administra su estado de entrega.' }}
+            </p>
+        </div>
+
+        <div style="
+            background: #eff6ff;
+            color: #1d4ed8;
+            padding: 0.8rem 1.2rem;
+            border-radius: 8px;
+            font-weight: bold;
+        ">
+            {{ $ingles ? 'Total Orders:' : 'Total de pedidos:' }}
+            {{ $pedidos->total() }}
+        </div>
+
+    </div>
+
+    {{-- MENSAJES --}}
+    @if (session('exito'))
+        <div style="
+            background: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        ">
+            {{ session('exito') }}
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div style="
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+        ">
+            {{ session('error') }}
+        </div>
+    @endif
+
+    {{-- LISTADO --}}
+    <div style="
+        background: #fff;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1.5rem;
+        overflow-x: auto;
+    ">
+
+        @if ($pedidos->isEmpty())
+
+            <div style="text-align: center; padding: 3rem 1rem;">
+
+                <h2>
+                    {{ $ingles
+                        ? 'No orders registered'
+                        : 'No hay pedidos registrados' }}
+                </h2>
+
+                <p style="color: #6b7280;">
+                    {{ $ingles
+                        ? 'Customer orders will appear here once a purchase is confirmed.'
+                        : 'Los pedidos de los clientes aparecerán aquí cuando se confirme una compra.' }}
+                </p>
+
+            </div>
+
+        @else
+
+            <table style="
+                width: 100%;
+                border-collapse: collapse;
+                min-width: 750px;
+            ">
+
+                <thead>
+                    <tr style="
+                        background: #f9fafb;
+                        border-bottom: 2px solid #e5e7eb;
+                    ">
+
+                        <th style="padding: 0.9rem; text-align: left;">
+                            {{ $ingles ? 'Order' : 'Pedido' }}
+                        </th>
+
+                        <th style="padding: 0.9rem; text-align: left;">
+                            {{ $ingles ? 'Customer' : 'Cliente' }}
+                        </th>
+
+                        <th style="padding: 0.9rem; text-align: left;">
+                            {{ $ingles ? 'Date' : 'Fecha' }}
+                        </th>
+
+                        <th style="padding: 0.9rem; text-align: right;">
+                            {{ $ingles ? 'Total' : 'Total' }}
+                        </th>
+
+                        <th style="padding: 0.9rem; text-align: center;">
+                            {{ $ingles ? 'Status' : 'Estado' }}
+                        </th>
+
+                        <th style="padding: 0.9rem; text-align: center;">
+                            {{ $ingles ? 'Actions' : 'Acciones' }}
+                        </th>
+
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    @foreach ($pedidos as $pedido)
+
+                        @php
+                            $estado = $estados[$pedido->estado] ?? [
+                                'es' => ucfirst($pedido->estado),
+                                'en' => ucfirst($pedido->estado),
+                                'color' => '#374151',
+                                'fondo' => '#f3f4f6',
+                            ];
+                        @endphp
+
+                        <tr style="border-bottom: 1px solid #e5e7eb;">
+
+                            {{-- NÚMERO --}}
+                            <td style="padding: 1rem;">
+                                <strong>#{{ $pedido->id }}</strong>
+                            </td>
+
+                            {{-- CLIENTE --}}
+                            <td style="padding: 1rem;">
+                                <strong>
+                                    {{ $pedido->usuario?->name
+                                        ?? ($ingles ? 'Unknown customer' : 'Cliente no disponible') }}
+                                </strong>
+
+                                @if ($pedido->usuario?->email)
+                                    <div style="
+                                        font-size: 0.85rem;
+                                        color: #6b7280;
+                                        margin-top: 0.25rem;
+                                    ">
+                                        {{ $pedido->usuario->email }}
+                                    </div>
+                                @endif
+                            </td>
+
+                            {{-- FECHA --}}
+                            <td style="padding: 1rem;">
+                                {{ $pedido->fecha?->format('d/m/Y') ?? '-' }}
+                            </td>
+
+                            {{-- TOTAL --}}
+                            <td style="padding: 1rem; text-align: right;">
+                                <strong>
+                                    ${{ number_format((float) $pedido->total, 0, ',', '.') }}
+                                </strong>
+                                <small>COP</small>
+                            </td>
+
+                            {{-- ESTADO --}}
+                            <td style="padding: 1rem; text-align: center;">
+                                <span style="
+                                    display: inline-block;
+                                    padding: 0.45rem 0.8rem;
+                                    border-radius: 20px;
+                                    background: {{ $estado['fondo'] }};
+                                    color: {{ $estado['color'] }};
+                                    font-size: 0.85rem;
+                                    font-weight: bold;
+                                    white-space: nowrap;
+                                ">
+                                    {{ $estado[$ingles ? 'en' : 'es'] }}
+                                </span>
+                            </td>
+
+                            {{-- ACCIONES --}}
+                            <td style="padding: 1rem; text-align: center;">
+                                <a
+                                    href="{{ route('admin.pedidos.show', $pedido) }}"
+                                    style="
+                                        display: inline-block;
+                                        background: #2563eb;
+                                        color: white;
+                                        padding: 0.6rem 1rem;
+                                        border-radius: 6px;
+                                        text-decoration: none;
+                                        white-space: nowrap;
+                                    "
+                                >
+                                    {{ $ingles ? 'View Details' : 'Ver detalles' }}
+                                </a>
+                            </td>
+
+                        </tr>
+
+                    @endforeach
+
+                </tbody>
+
+            </table>
+
+        @endif
+
+    </div>
+
+    {{-- PAGINACIÓN --}}
+    @if ($pedidos->hasPages())
+
+        <div style="margin-top: 1.5rem;">
+            {{ $pedidos->links() }}
+        </div>
+
+    @endif
+
+</div>
+
+@endsection

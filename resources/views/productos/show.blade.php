@@ -1,13 +1,79 @@
 @extends('layouts.app')
 
-@section('titulo', $producto->nombre)
+@php
+    $ingles = app()->getLocale() === 'en';
+
+    // Traducciones de categorías
+    $traduccionesCategorias = [
+        'sofás' => 'Sofas',
+        'sofá' => 'Sofa',
+        'mesas' => 'Tables',
+        'mesa' => 'Table',
+        'sillas' => 'Chairs',
+        'silla' => 'Chair',
+        'lámparas' => 'Lamps',
+        'lámpara' => 'Lamp',
+        'camas' => 'Beds',
+        'cama' => 'Bed',
+        'escritorios' => 'Desks',
+        'escritorio' => 'Desk',
+        'decoración' => 'Decoration',
+        'muebles' => 'Furniture',
+        'accesorios' => 'Accessories',
+    ];
+
+    // Traducciones de ambientes
+    $traduccionesAmbientes = [
+        'cocina' => 'Kitchen',
+        'dormitorio' => 'Bedroom',
+        'exterior' => 'Outdoor',
+        'oficina' => 'Office',
+        'sala' => 'Living Room',
+        'comedor' => 'Dining Room',
+        'baño' => 'Bathroom',
+        'terraza' => 'Terrace',
+        'jardín' => 'Garden',
+        'estudio' => 'Study',
+    ];
+
+    // Nombre y descripción traducidos desde el modelo
+    $nombreProducto = $producto->nombre_localizado;
+    $descripcionProducto = $producto->descripcion_localizada;
+
+    // Categoría
+    $categoriaOriginal = $producto->categoria?->nombre;
+
+    $claveCategoria = mb_strtolower(
+        trim($categoriaOriginal ?? '')
+    );
+
+    $nombreCategoria = $ingles
+        ? ($traduccionesCategorias[$claveCategoria] ?? $categoriaOriginal)
+        : $categoriaOriginal;
+
+    // Ambiente
+    $ambienteOriginal = $producto->ambiente?->nombre;
+
+    $claveAmbiente = mb_strtolower(
+        trim($ambienteOriginal ?? '')
+    );
+
+    $nombreAmbiente = $ingles
+        ? ($traduccionesAmbientes[$claveAmbiente] ?? $ambienteOriginal)
+        : $ambienteOriginal;
+@endphp
+
+@section('titulo', $nombreProducto)
 
 @section('contenido')
 
+    {{-- Volver al catálogo --}}
     <a href="{{ route('productos.index') }}">
-        &larr; Volver al catálogo
+        &larr;
+        {{ $ingles ? 'Back to Catalog' : 'Volver al catálogo' }}
     </a>
 
+    {{-- Mensajes del sistema --}}
     @if (session('exito'))
         <div class="mensaje-exito" style="margin-top:1rem;">
             {{ session('exito') }}
@@ -22,54 +88,68 @@
 
     <div class="tarjeta" style="margin-top:1rem;">
 
-        <span class="etiqueta">
-            {{ $producto->categoria->nombre }}
-        </span>
+        {{-- Categoría y ambiente --}}
+        <div style="margin-bottom:1rem;">
 
-        <span class="etiqueta">
-            {{ $producto->ambiente->nombre }}
-        </span>
+            <span class="etiqueta">
+                {{ $nombreCategoria ?: ($ingles ? 'Uncategorized' : 'Sin categoría') }}
+            </span>
 
-        <img
-            src="{{ $producto->imagen ?? 'https://placehold.co/600x400?text=Sin+imagen' }}"
-            alt="{{ $producto->nombre }}"
-            style="
-                width:100%;
-                max-width:400px;
-                border-radius:8px;
-                margin:1rem 0;
-            "
-        >
+            <span class="etiqueta">
+                {{ $nombreAmbiente ?: ($ingles ? 'No room assigned' : 'Sin ambiente') }}
+            </span>
 
+        </div>
+
+        {{-- Imagen del producto --}}
+        <div style="text-align:center; margin-bottom:1.5rem;">
+
+            <img
+                src="{{ $producto->imagen ?: 'https://placehold.co/600x400?text=No+image' }}"
+                alt="{{ $nombreProducto }}"
+                style="
+                    width:100%;
+                    max-width:550px;
+                    max-height:400px;
+                    object-fit:cover;
+                    border-radius:10px;
+                "
+            >
+
+        </div>
+
+        {{-- Información general --}}
         <h2>
-            {{ $producto->nombre }}
+            {{ $nombreProducto }}
         </h2>
 
         <p>
-            {{ $producto->descripcion }}
+            {{ $descripcionProducto }}
         </p>
 
-        <p
-            class="precio"
-            style="font-size:1.3rem;"
-        >
+        <p class="precio" style="font-size:1.4rem;">
             ${{ number_format($producto->precio, 0, ',', '.') }}
         </p>
 
         <p>
-            Stock disponible: {{ $producto->stock }}
+            <strong>
+                {{ $ingles ? 'Available Stock:' : 'Stock disponible:' }}
+            </strong>
 
-            · Calificación promedio:
+            {{ $producto->stock }}
+        </p>
+
+        <p>
+            <strong>
+                {{ $ingles ? 'Average Rating:' : 'Calificación promedio:' }}
+            </strong>
 
             <span class="estrella">
-                ★ {{ $producto->calificacionPromedio() }}
+                ★ {{ $producto->calificacionPromedio() }} / 5
             </span>
         </p>
 
-        {{-- ===============================
-             CARRITO
-        =============================== --}}
-
+        {{-- Carrito de compras --}}
         @auth
 
             @if ($producto->stock > 0)
@@ -86,18 +166,17 @@
                         flex-wrap:wrap;
                     "
                 >
-
                     @csrf
 
                     <label for="cantidad">
-                        Cantidad:
+                        {{ $ingles ? 'Quantity:' : 'Cantidad:' }}
                     </label>
 
                     <input
                         type="number"
                         id="cantidad"
                         name="cantidad"
-                        value="1"
+                        value="{{ old('cantidad', 1) }}"
                         min="1"
                         max="{{ $producto->stock }}"
                         style="
@@ -109,11 +188,8 @@
                         required
                     >
 
-                    <button
-                        type="submit"
-                        class="boton"
-                    >
-                        Agregar al carrito
+                    <button type="submit" class="boton">
+                        {{ $ingles ? 'Add to Cart' : 'Agregar al carrito' }}
                     </button>
 
                 </form>
@@ -121,7 +197,9 @@
             @else
 
                 <p class="vacio">
-                    Este producto está agotado.
+                    {{ $ingles
+                        ? 'This product is out of stock.'
+                        : 'Este producto está agotado.' }}
                 </p>
 
             @endif
@@ -134,27 +212,28 @@
                     href="{{ route('login') }}"
                     class="boton"
                 >
-                    Inicia sesión para agregar al carrito
+                    {{ $ingles
+                        ? 'Log in to add to cart'
+                        : 'Inicia sesión para agregar al carrito' }}
                 </a>
 
             </div>
 
         @endauth
 
-        {{-- ===============================
-             FICHA TÉCNICA
-        =============================== --}}
-
+        {{-- Ficha técnica --}}
         @if ($producto->especificacion)
 
             <h3>
-                Ficha técnica
+                {{ $ingles ? 'Technical Specifications' : 'Ficha técnica' }}
             </h3>
 
             <table>
 
                 <tr>
-                    <th>Material</th>
+                    <th>
+                        {{ $ingles ? 'Material' : 'Material' }}
+                    </th>
 
                     <td>
                         {{ $producto->especificacion->material }}
@@ -162,7 +241,9 @@
                 </tr>
 
                 <tr>
-                    <th>Color</th>
+                    <th>
+                        {{ $ingles ? 'Color' : 'Color' }}
+                    </th>
 
                     <td>
                         {{ $producto->especificacion->color }}
@@ -170,7 +251,11 @@
                 </tr>
 
                 <tr>
-                    <th>Dimensiones (A x Al x P)</th>
+                    <th>
+                        {{ $ingles
+                            ? 'Dimensions (W x H x D)'
+                            : 'Dimensiones (A x Al x P)' }}
+                    </th>
 
                     <td>
                         {{ $producto->especificacion->ancho_cm }}
@@ -183,7 +268,9 @@
                 </tr>
 
                 <tr>
-                    <th>Peso</th>
+                    <th>
+                        {{ $ingles ? 'Weight' : 'Peso' }}
+                    </th>
 
                     <td>
                         {{ $producto->especificacion->peso_kg }} kg
@@ -191,21 +278,30 @@
                 </tr>
 
                 <tr>
-                    <th>Requiere ensamblaje</th>
+                    <th>
+                        {{ $ingles
+                            ? 'Assembly Required'
+                            : 'Requiere ensamblaje' }}
+                    </th>
 
                     <td>
-                        {{ $producto->especificacion->requiere_ensamblaje
-                            ? 'Sí'
-                            : 'No' }}
+                        {{ $ingles
+                            ? ($producto->especificacion->requiere_ensamblaje ? 'Yes' : 'No')
+                            : ($producto->especificacion->requiere_ensamblaje ? 'Sí' : 'No') }}
                     </td>
                 </tr>
 
                 <tr>
-                    <th>Garantía</th>
+                    <th>
+                        {{ $ingles ? 'Warranty' : 'Garantía' }}
+                    </th>
 
                     <td>
                         {{ $producto->especificacion->garantia_meses }}
-                        meses
+
+                        {{ $ingles
+                            ? ($producto->especificacion->garantia_meses == 1 ? 'month' : 'months')
+                            : ($producto->especificacion->garantia_meses == 1 ? 'mes' : 'meses') }}
                     </td>
                 </tr>
 
@@ -214,45 +310,53 @@
             <a
                 class="boton boton-secundario"
                 style="margin-top:0.8rem;"
-                href="{{ route('productos.comparar', ['ids' => $producto->id]) }}"
+                href="{{ route('productos.index') }}"
             >
-                Comparar este producto
+                {{ $ingles
+                    ? 'Compare with Other Products'
+                    : 'Comparar con otros productos' }}
             </a>
 
         @endif
 
-        {{-- ===============================
-             RESEÑAS
-        =============================== --}}
-
-        <h3>
-            Reseñas
+        {{-- Reseñas --}}
+        <h3 style="margin-top:2rem;">
+            {{ $ingles ? 'Customer Reviews' : 'Reseñas de clientes' }}
         </h3>
 
         @forelse ($producto->resenas as $resena)
 
-            <p>
+            <div
+                style="
+                    padding:1rem;
+                    margin-bottom:0.8rem;
+                    border:1px solid #e5d9d1;
+                    border-radius:8px;
+                    background:#fff;
+                "
+            >
 
                 <strong>
-                    {{ $resena->usuario->name }}
+                    {{ $resena->usuario?->name
+                        ?? ($ingles ? 'User unavailable' : 'Usuario no disponible') }}
                 </strong>
 
-                —
-
-                <span class="estrella">
-                    {{ str_repeat('★', $resena->calificacion) }}
+                <span class="estrella" style="margin-left:0.5rem;">
+                    {{ str_repeat('★', max(0, min(5, (int) $resena->calificacion))) }}
                 </span>
 
-                <br>
+                <p style="margin-top:0.5rem;">
+                    {{ $resena->comentario }}
+                </p>
 
-                {{ $resena->comentario }}
-
-            </p>
+            </div>
 
         @empty
 
             <p class="vacio">
-                Todavía no tiene reseñas.
+                {{ $ingles
+                    ? 'This product has no reviews yet.'
+                    : 'Este producto todavía no tiene reseñas.' }}
             </p>
 
         @endforelse

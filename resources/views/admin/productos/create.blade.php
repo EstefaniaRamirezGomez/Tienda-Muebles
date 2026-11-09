@@ -1,14 +1,29 @@
 @extends('layouts.admin')
 
-@section('titulo', 'Crear producto')
+@section('titulo', app()->getLocale() === 'en'
+    ? 'Create Product'
+    : 'Crear producto'
+)
 
 @section('contenido')
 
-    <h2>Crear producto</h2>
+    @php
+        $ingles = app()->getLocale() === 'en';
+    @endphp
+
+    {{-- ENCABEZADO --}}
+
+    <h2>
+        {{ $ingles ? 'Create Product' : 'Crear producto' }}
+    </h2>
 
     <p>
-        Agrega un nuevo producto al catálogo de la tienda.
+        {{ $ingles
+            ? 'Add a new product to the store catalog.'
+            : 'Agrega un nuevo producto al catálogo de la tienda.' }}
     </p>
+
+    {{-- FORMULARIO DE CREACIÓN --}}
 
     <div class="tarjeta-admin">
 
@@ -20,7 +35,9 @@
             @csrf
 
             @include('admin.productos._form', [
-                'textoBoton' => 'Crear producto'
+                'textoBoton' => $ingles
+                    ? 'Create Product'
+                    : 'Crear producto'
             ])
 
         </form>

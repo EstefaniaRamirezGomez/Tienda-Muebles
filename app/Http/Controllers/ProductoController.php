@@ -2,37 +2,46 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\DetallePedido;
 use App\Models\Producto;
+use App\Services\ProductoService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class ProductoController extends Controller
 {
+    public function __construct(
+        private readonly ProductoService $productoService
+    ) {
+    }
+
+    /**
+     * Mostrar catálogo paginado.
+     */
     public function index(): View
     {
-        $productos = Producto::with(['categoria', 'ambiente'])
-            ->orderBy('nombre')
-            ->get();
+        $productos = $this->productoService->listar();
 
         return view('productos.index', compact('productos'));
     }
 
+    /**
+     * Mostrar información detallada de un producto.
+     */
     public function show(Producto $producto): View
     {
-        $producto->load(['categoria', 'ambiente', 'especificacion', 'resenas.usuario']);
+        $producto = $this->productoService->obtenerDetalle($producto);
 
         return view('productos.show', compact('producto'));
     }
 
+    /**
+     * Buscar productos por nombre.
+     */
     public function buscar(Request $request): View
     {
-        $termino = $request->query('q', '');
+        $termino = trim((string) $request->query('q', ''));
 
-        $productos = Producto::with(['categoria', 'ambiente'])
-            ->when($termino !== '', fn ($query) => $query->where('nombre', 'like', "%{$termino}%"))
-            ->orderBy('nombre')
-            ->get();
+        $productos = $this->productoService->buscar($termino);
 
         return view('productos.index', [
             'productos' => $productos,
@@ -40,50 +49,37 @@ class ProductoController extends Controller
         ]);
     }
 
+    /**
+     * Mostrar productos destacados.
+     */
     public function destacados(): View
     {
-        $masVendidos = DetallePedido::selectRaw('producto_id, SUM(cantidad) as unidades_vendidas')
-            ->groupBy('producto_id')
-            ->orderByDesc('unidades_vendidas')
-            ->with('producto')
-            ->take(5)
-            ->get();
+        $masVendidos = $this->productoService->masVendidos();
 
-        $mejorCalificados = Producto::withAvg('resenas', 'calificacion')
-            ->whereHas('resenas')
-            ->orderByDesc('resenas_avg_calificacion')
-            ->take(5)
-            ->get();
+        $mejorCalificados = $this->productoService->mejorCalificados();
 
-        return view('productos.destacados', compact('masVendidos', 'mejorCalificados'));
+        return view('productos.destacados', compact(
+            'masVendidos',
+            'mejorCalificados'
+        ));
     }
 
+    /**
+     * Comparar hasta tres productos de la misma categoría.
+     */
     public function comparar(Request $request): View
     {
         $crudo = $request->query('ids', []);
 
         $ids = is_array($crudo)
-            ? collect($crudo)
-            : collect(explode(',', (string) $crudo));
+            ? $crudo
+            : explode(',', (string) $crudo);
 
-        $ids = $ids->filter()->map(fn ($id) => (int) $id)->unique()->take(3);
+        $resultado = $this->productoService->comparar($ids);
 
-        $productos = Producto::with(['especificacion', 'categoria'])
-            ->whereIn('id', $ids)
-            ->get();
-
-        $totalSolicitados = $productos->count();
-
-        // Solo se compara dentro de la misma categoría (un sofá contra una
-        // lámpara no aporta nada). Se toma la categoría del primer producto
-        // y se descarta cualquier otro que no coincida.
-        if ($productos->isNotEmpty()) {
-            $categoriaId = $productos->first()->categoria_id;
-            $productos = $productos->filter(fn ($p) => $p->categoria_id === $categoriaId)->values();
-        }
-
-        $huboDescartados = $productos->count() < $totalSolicitados;
-
-        return view('productos.comparar', compact('productos', 'huboDescartados'));
+        return view('productos.comparar', [
+            'productos' => $resultado['productos'],
+            'huboDescartados' => $resultado['huboDescartados'],
+        ]);
     }
 }

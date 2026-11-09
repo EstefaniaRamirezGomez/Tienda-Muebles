@@ -1,8 +1,13 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 <head>
     <meta charset="UTF-8">
-    <title>@yield('titulo', 'Catálogo') · Muebles &amp; Decoración</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        @yield('titulo', __('messages.products'))
+        · {{ app()->getLocale() === 'en' ? 'Furniture & Decoration' : 'Muebles & Decoración' }}
+    </title>
 
     <style>
         :root {
@@ -32,7 +37,7 @@
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.5rem;
+            gap: 0.75rem;
         }
 
         header h1 {
@@ -44,6 +49,7 @@
             display: flex;
             align-items: center;
             flex-wrap: wrap;
+            gap: 0.25rem;
         }
 
         nav a {
@@ -111,7 +117,10 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            grid-template-columns: repeat(
+                auto-fill,
+                minmax(220px, 1fr)
+            );
             gap: 1rem;
             margin-top: 1rem;
         }
@@ -185,9 +194,7 @@
             color: var(--arena);
         }
 
-        /* ===============================
-           MENSAJES
-        =============================== */
+        /* MENSAJES */
 
         .mensaje-exito {
             background: #E8F5E9;
@@ -206,9 +213,7 @@
             margin-bottom: 1rem;
         }
 
-        /* ===============================
-           SESIÓN EN EL MENÚ
-        =============================== */
+        /* SESIÓN EN EL MENÚ */
 
         .form-salir {
             display: inline;
@@ -230,9 +235,7 @@
             color: var(--terracota-oscuro);
         }
 
-        /* ===============================
-           CARRITO
-        =============================== */
+        /* CARRITO */
 
         .carrito-link {
             position: relative;
@@ -251,9 +254,7 @@
             text-align: center;
         }
 
-        /* ===============================
-           FORMULARIOS LOGIN / REGISTRO
-        =============================== */
+        /* FORMULARIOS LOGIN / REGISTRO */
 
         .formulario-auth {
             max-width: 420px;
@@ -301,6 +302,68 @@
             font-size: 0.9rem;
             margin-bottom: 0;
         }
+
+        /* SELECTOR DE IDIOMAS */
+
+        .selector-idioma {
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+            margin-left: 1.2rem;
+            padding: 0.25rem;
+            border: 1px solid rgba(255,255,255,0.35);
+            border-radius: 8px;
+        }
+
+        .selector-idioma a {
+            margin: 0;
+            padding: 0.3rem 0.55rem;
+            border-radius: 5px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--arena);
+            text-decoration: none;
+        }
+
+        .selector-idioma a:hover {
+            color: #fff;
+            background: rgba(255,255,255,0.15);
+            text-decoration: none;
+        }
+
+        .selector-idioma a.activo {
+            background: var(--arena);
+            color: var(--terracota-oscuro);
+        }
+
+        /* DISEÑO RESPONSIVE */
+
+        @media (max-width: 768px) {
+            header {
+                padding: 1rem;
+            }
+
+            nav {
+                gap: 0.5rem;
+            }
+
+            nav a {
+                margin-left: 0.5rem;
+            }
+
+            .selector-idioma {
+                margin-left: 0.5rem;
+            }
+
+            .form-salir {
+                margin-left: 0.5rem;
+            }
+
+            main {
+                margin: 1.5rem auto;
+                padding: 0 1rem;
+            }
+        }
     </style>
 </head>
 
@@ -313,22 +376,31 @@
                 href="{{ route('inicio') }}"
                 class="logo-inicio"
             >
-                🪑 Muebles &amp; Decoración
+                🪑 {{ app()->getLocale() === 'en'
+                    ? 'Furniture & Decoration'
+                    : 'Muebles & Decoración' }}
             </a>
         </h1>
 
         <nav>
 
+            {{-- CATÁLOGO --}}
             <a href="{{ route('productos.index') }}">
-                Catálogo
+                {{ app()->getLocale() === 'en'
+                    ? 'Catalog'
+                    : 'Catálogo' }}
             </a>
 
+            {{-- AMBIENTES --}}
             <a href="{{ route('ambientes.index') }}">
-                Ambientes
+                {{ app()->getLocale() === 'en'
+                    ? 'Rooms'
+                    : 'Ambientes' }}
             </a>
 
+            {{-- DESTACADOS --}}
             <a href="{{ route('productos.destacados') }}">
-                Destacados
+                {{ __('messages.featured') }}
             </a>
 
             @auth
@@ -339,25 +411,37 @@
                     )->sum('cantidad');
                 @endphp
 
+                {{-- CARRITO --}}
                 <a
                     href="{{ route('carrito.index') }}"
                     class="carrito-link"
                 >
-                    🛒 Carrito
+                    🛒 {{ __('messages.cart') }}
 
                     <span class="carrito-contador">
                         {{ $cantidadCarrito }}
                     </span>
                 </a>
 
+                {{-- MIS PEDIDOS --}}
+                <a href="{{ route('pedidos.index') }}">
+                    {{ app()->getLocale() === 'en'
+                        ? 'My Orders'
+                        : 'Mis pedidos' }}
+                </a>
+
+                {{-- PANEL ADMINISTRADOR --}}
                 @if (auth()->user()->esAdmin())
 
                     <a href="{{ route('admin.inicio') }}">
-                        Panel administrador
+                        {{ app()->getLocale() === 'en'
+                            ? 'Admin panel'
+                            : 'Panel administrador' }}
                     </a>
 
                 @endif
 
+                {{-- CERRAR SESIÓN --}}
                 <form
                     method="POST"
                     action="{{ route('logout') }}"
@@ -366,21 +450,53 @@
                     @csrf
 
                     <button type="submit">
-                        Cerrar sesión
+                        {{ __('messages.logout') }}
                     </button>
                 </form>
 
             @else
 
+                {{-- INICIAR SESIÓN --}}
                 <a href="{{ route('login') }}">
-                    Iniciar sesión
+                    {{ __('messages.login') }}
                 </a>
 
+                {{-- REGISTRO --}}
                 <a href="{{ route('register') }}">
-                    Registrarse
+                    {{ app()->getLocale() === 'en'
+                        ? 'Register'
+                        : 'Registrarse' }}
                 </a>
 
             @endauth
+
+            {{-- SELECTOR DE IDIOMA --}}
+            <div
+                class="selector-idioma"
+                aria-label="{{ app()->getLocale() === 'en' ? 'Select language' : 'Seleccionar idioma' }}"
+            >
+
+                <a
+                    href="{{ route('idioma.cambiar', 'es') }}"
+                    class="{{ app()->getLocale() === 'es' ? 'activo' : '' }}"
+                    lang="es"
+                    aria-label="Español"
+                    aria-current="{{ app()->getLocale() === 'es' ? 'true' : 'false' }}"
+                >
+                    ES
+                </a>
+
+                <a
+                    href="{{ route('idioma.cambiar', 'en') }}"
+                    class="{{ app()->getLocale() === 'en' ? 'activo' : '' }}"
+                    lang="en"
+                    aria-label="English"
+                    aria-current="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}"
+                >
+                    EN
+                </a>
+
+            </div>
 
         </nav>
 

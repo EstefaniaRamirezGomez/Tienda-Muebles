@@ -1,11 +1,30 @@
 @extends('layouts.app')
 
-@section('titulo', 'Carrito de compras')
+@section('titulo', app()->getLocale() === 'en' ? 'Shopping Cart' : 'Carrito de compras')
 
 @section('contenido')
 
-    <h2>Carrito de compras</h2>
+    @php
+        $ingles = app()->getLocale() === 'en';
 
+        // Consultar los productos para obtener sus nombres traducidos.
+        $idsProductos = collect($carrito ?? [])
+            ->pluck('id')
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+
+        $productosTraducidos = \App\Models\Producto::whereIn('id', $idsProductos)
+            ->get()
+            ->keyBy('id');
+    @endphp
+
+    <h2>
+        {{ $ingles ? 'Shopping Cart' : 'Carrito de compras' }}
+    </h2>
+
+    {{-- MENSAJES --}}
     @if (session('exito'))
         <div class="mensaje-exito">
             {{ session('exito') }}
@@ -18,34 +37,64 @@
         </div>
     @endif
 
+    @if ($errors->any())
+        <div class="mensaje-error">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    {{-- CARRITO VACÍO --}}
     @if (empty($carrito))
 
         <div class="tarjeta">
+
             <p class="vacio">
-                Tu carrito está vacío.
+                {{ $ingles
+                    ? 'Your shopping cart is empty.'
+                    : 'Tu carrito está vacío.' }}
             </p>
 
             <a
                 href="{{ route('productos.index') }}"
                 class="boton"
             >
-                Ver productos
+                {{ $ingles ? 'View Products' : 'Ver productos' }}
             </a>
+
         </div>
 
     @else
 
-        <div class="tarjeta">
+        {{-- TABLA DE PRODUCTOS --}}
+        <div class="tarjeta" style="overflow-x:auto;">
 
             <table>
 
                 <thead>
                     <tr>
-                        <th>Producto</th>
-                        <th>Precio</th>
-                        <th>Cantidad</th>
-                        <th>Subtotal</th>
-                        <th>Acciones</th>
+                        <th>
+                            {{ $ingles ? 'Product' : 'Producto' }}
+                        </th>
+
+                        <th>
+                            {{ $ingles ? 'Price' : 'Precio' }}
+                        </th>
+
+                        <th>
+                            {{ $ingles ? 'Quantity' : 'Cantidad' }}
+                        </th>
+
+                        <th>
+                            {{ $ingles ? 'Subtotal' : 'Subtotal' }}
+                        </th>
+
+                        <th>
+                            {{ $ingles ? 'Actions' : 'Acciones' }}
+                        </th>
                     </tr>
                 </thead>
 
@@ -53,14 +102,24 @@
 
                     @foreach ($carrito as $item)
 
+                        @php
+                            $productoActual = $productosTraducidos->get($item['id']);
+
+                            $nombreProducto = $productoActual
+                                ? $productoActual->nombre_localizado
+                                : $item['nombre'];
+                        @endphp
+
                         <tr>
 
+                            {{-- PRODUCTO --}}
                             <td>
+
                                 <div style="display:flex; align-items:center; gap:1rem;">
 
                                     <img
-                                        src="{{ $item['imagen'] ?? 'https://placehold.co/100x80?text=Sin+imagen' }}"
-                                        alt="{{ $item['nombre'] }}"
+                                        src="{{ $item['imagen'] ?? 'https://placehold.co/100x80?text=No+image' }}"
+                                        alt="{{ $nombreProducto }}"
                                         style="
                                             width:80px;
                                             height:60px;
@@ -71,17 +130,20 @@
 
                                     <div>
                                         <strong>
-                                            {{ $item['nombre'] }}
+                                            {{ $nombreProducto }}
                                         </strong>
                                     </div>
 
                                 </div>
+
                             </td>
 
+                            {{-- PRECIO --}}
                             <td>
                                 ${{ number_format($item['precio'], 0, ',', '.') }}
                             </td>
 
+                            {{-- CANTIDAD --}}
                             <td>
 
                                 <form
@@ -98,7 +160,8 @@
                                         name="cantidad"
                                         value="{{ $item['cantidad'] }}"
                                         min="1"
-                                        max="{{ $item['stock'] }}"
+                                        max="{{ $productoActual?->stock ?? $item['stock'] }}"
+                                        aria-label="{{ $ingles ? 'Quantity' : 'Cantidad' }}"
                                         style="width:70px;"
                                         required
                                     >
@@ -107,13 +170,14 @@
                                         type="submit"
                                         class="boton boton-secundario"
                                     >
-                                        Actualizar
+                                        {{ $ingles ? 'Update' : 'Actualizar' }}
                                     </button>
 
                                 </form>
 
                             </td>
 
+                            {{-- SUBTOTAL --}}
                             <td>
                                 ${{ number_format(
                                     $item['precio'] * $item['cantidad'],
@@ -123,12 +187,13 @@
                                 ) }}
                             </td>
 
+                            {{-- ACCIONES --}}
                             <td>
 
                                 <form
                                     action="{{ route('carrito.eliminar', $item['id']) }}"
                                     method="POST"
-                                    onsubmit="return confirm('¿Eliminar este producto del carrito?');"
+                                    onsubmit="return confirm(@js($ingles ? 'Remove this product from your cart?' : '¿Eliminar este producto del carrito?'));"
                                 >
 
                                     @csrf
@@ -138,7 +203,7 @@
                                         type="submit"
                                         class="boton boton-eliminar"
                                     >
-                                        Eliminar
+                                        {{ $ingles ? 'Remove' : 'Eliminar' }}
                                     </button>
 
                                 </form>
@@ -155,7 +220,7 @@
 
         </div>
 
-
+        {{-- TOTAL DEL CARRITO --}}
         <div
             class="tarjeta"
             style="
@@ -164,13 +229,14 @@
                 justify-content:space-between;
                 align-items:center;
                 gap:1rem;
+                flex-wrap:wrap;
             "
         >
 
             <div>
 
                 <h3 style="margin:0;">
-                    Total
+                    {{ $ingles ? 'Total' : 'Total' }}
                 </h3>
 
                 <p
@@ -180,24 +246,37 @@
                         margin:0.5rem 0 0;
                     "
                 >
-                    ${{ number_format($total, 0, ',', '.') }}
+                    ${{ number_format($total, 0, ',', '.') }} COP
                 </p>
+
+                <small style="color:#6b7280;">
+                    {{ $ingles
+                        ? 'Final prices will be verified when confirming your order.'
+                        : 'Los precios finales se verificarán al confirmar el pedido.' }}
+                </small>
 
             </div>
 
-            <div style="display:flex; gap:0.5rem;">
+            <div style="
+                display:flex;
+                gap:0.5rem;
+                flex-wrap:wrap;
+                align-items:center;
+            ">
 
+                {{-- SEGUIR COMPRANDO --}}
                 <a
                     href="{{ route('productos.index') }}"
                     class="boton boton-secundario"
                 >
-                    Seguir comprando
+                    {{ $ingles ? 'Continue Shopping' : 'Seguir comprando' }}
                 </a>
 
+                {{-- VACIAR CARRITO --}}
                 <form
                     action="{{ route('carrito.vaciar') }}"
                     method="POST"
-                    onsubmit="return confirm('¿Seguro que deseas vaciar todo el carrito?');"
+                    onsubmit="return confirm(@js($ingles ? 'Are you sure you want to empty your entire cart?' : '¿Seguro que deseas vaciar todo el carrito?'));"
                 >
 
                     @csrf
@@ -207,10 +286,25 @@
                         type="submit"
                         class="boton boton-eliminar"
                     >
-                        Vaciar carrito
+                        {{ $ingles ? 'Empty Cart' : 'Vaciar carrito' }}
                     </button>
 
                 </form>
+
+                {{-- FINALIZAR COMPRA --}}
+                <a
+                    href="{{ route('pedidos.create') }}"
+                    class="boton"
+                    style="
+                        background:#16a34a;
+                        color:#fff;
+                        font-weight:bold;
+                        text-decoration:none;
+                        display:inline-block;
+                    "
+                >
+                    {{ $ingles ? 'Checkout' : 'Finalizar compra' }}
+                </a>
 
             </div>
 

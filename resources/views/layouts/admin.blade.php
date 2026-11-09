@@ -1,12 +1,19 @@
 {{-- Autor: Estefanía Ramírez Gómez --}}
 <!DOCTYPE html>
-<html lang="es">
+<html lang="{{ app()->getLocale() }}">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <title>@yield('titulo', 'Panel de administración') · Muebles & Decoración</title>
+    @php
+        $ingles = app()->getLocale() === 'en';
+    @endphp
+
+    <title>
+        @yield('titulo', $ingles ? 'Administration Panel' : 'Panel de administración')
+        · Muebles & Decoración
+    </title>
 
     <style>
         :root {
@@ -86,6 +93,8 @@
             display: flex;
             justify-content: flex-end;
             align-items: center;
+            gap: 1rem;
+            flex-wrap: wrap;
             font-size: 0.9rem;
         }
 
@@ -97,12 +106,53 @@
             background: none;
             border: 1px solid var(--borde);
             border-radius: 6px;
-            padding: 0.35rem 0.8rem;
+            padding: 0.45rem 0.8rem;
             cursor: pointer;
+            font: inherit;
         }
 
         .barra button:hover {
             background: #F4F5F7;
+        }
+
+        /* =========================
+           SELECTOR DE IDIOMA
+        ========================= */
+
+        .selector-idioma {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .selector-idioma span {
+            font-size: 0.85rem;
+            color: #6B7686;
+            margin-right: 0.3rem;
+        }
+
+        .selector-idioma a {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.45rem 0.75rem;
+            border: 1px solid var(--borde);
+            border-radius: 6px;
+            text-decoration: none;
+            color: var(--texto);
+            font-size: 0.85rem;
+            transition: background 0.2s;
+        }
+
+        .selector-idioma a:hover {
+            background: #F4F5F7;
+        }
+
+        .selector-idioma a.activo {
+            background: var(--acento);
+            border-color: var(--acento);
+            color: #fff;
+            font-weight: 600;
         }
 
         main {
@@ -257,6 +307,14 @@
             margin-bottom: 1rem;
         }
 
+        .mensaje-error {
+            background: #FDECEA;
+            border: 1px solid #F5C2C0;
+            padding: 0.8rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+        }
+
         /* =========================
            TABLA
         ========================= */
@@ -322,6 +380,7 @@
 
             .barra {
                 padding: 0.8rem 1rem;
+                justify-content: flex-start;
             }
 
             main {
@@ -339,36 +398,81 @@
 
 <body>
 
+    {{-- MENÚ LATERAL --}}
     <aside>
 
         <h1>
-            🪑 Panel de administración
+            🪑 {{ $ingles ? 'Administration Panel' : 'Panel de administración' }}
         </h1>
 
+        {{-- INICIO --}}
         <a
             href="{{ route('admin.inicio') }}"
             class="{{ request()->routeIs('admin.inicio') ? 'activo' : '' }}"
         >
-            Inicio
+            {{ $ingles ? 'Dashboard' : 'Inicio' }}
         </a>
 
+        {{-- PRODUCTOS --}}
         <a
             href="{{ route('admin.productos.index') }}"
             class="{{ request()->routeIs('admin.productos.*') ? 'activo' : '' }}"
         >
-            Productos
+            {{ $ingles ? 'Products' : 'Productos' }}
         </a>
 
+        {{-- PEDIDOS --}}
+        <a
+            href="{{ route('admin.pedidos.index') }}"
+            class="{{ request()->routeIs('admin.pedidos.*') ? 'activo' : '' }}"
+        >
+            {{ $ingles ? 'Orders' : 'Gestionar pedidos' }}
+        </a>
+
+        {{-- VER TIENDA --}}
         <a href="{{ route('inicio') }}">
-            Ver tienda
+            {{ $ingles ? 'View Store' : 'Ver tienda' }}
         </a>
 
     </aside>
 
+    {{-- CONTENIDO PRINCIPAL --}}
     <div class="contenido">
 
+        {{-- BARRA SUPERIOR --}}
         <div class="barra">
 
+            {{-- SELECTOR DE IDIOMA --}}
+            <div
+                class="selector-idioma"
+                aria-label="{{ $ingles ? 'Language selector' : 'Selector de idioma' }}"
+            >
+
+                <span>
+                    {{ $ingles ? 'Language:' : 'Idioma:' }}
+                </span>
+
+                <a
+                    href="{{ route('idioma.cambiar', 'es') }}"
+                    class="{{ !$ingles ? 'activo' : '' }}"
+                    lang="es"
+                    aria-current="{{ !$ingles ? 'true' : 'false' }}"
+                >
+                    🇨🇴 Español
+                </a>
+
+                <a
+                    href="{{ route('idioma.cambiar', 'en') }}"
+                    class="{{ $ingles ? 'activo' : '' }}"
+                    lang="en"
+                    aria-current="{{ $ingles ? 'true' : 'false' }}"
+                >
+                    🇺🇸 English
+                </a>
+
+            </div>
+
+            {{-- CERRAR SESIÓN --}}
             <form
                 method="POST"
                 action="{{ route('logout') }}"
@@ -376,13 +480,14 @@
                 @csrf
 
                 <button type="submit">
-                    Cerrar sesión
+                    {{ $ingles ? 'Log Out' : 'Cerrar sesión' }}
                 </button>
 
             </form>
 
         </div>
 
+        {{-- CONTENIDO DE CADA VISTA --}}
         <main>
             @yield('contenido')
         </main>

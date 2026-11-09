@@ -1,43 +1,47 @@
-<?php 
+<?php
 
- 
+namespace App\Http\Controllers\Api;
 
-namespace App\Http\Controllers\Api; 
+use App\Http\Controllers\Controller;
+use App\Models\Producto;
+use Illuminate\Http\JsonResponse;
 
- 
+class ProductApiController extends Controller
+{
+    public function index(): JsonResponse
+    {
+        $productos = Producto::with(['categoria', 'ambiente'])
+            ->where('stock', '>', 0)
+            ->get();
 
-use App\Http\Controllers\Controller; 
+        return response()->json([
+            'total' => $productos->count(),
+            'productos' => $productos->map(fn (Producto $producto) => [
+                'id' => $producto->id,
+                'nombre' => $producto->nombre,
+                'descripcion' => $producto->descripcion,
+                'precio' => $producto->precio,
+                'stock' => $producto->stock,
+                'categoria' => $producto->categoria?->nombre,
+                'ambiente' => $producto->ambiente?->nombre,
+                'url' => route('productos.show', $producto->id),
+            ]),
+        ]);
+    }
 
-use App\Models\Product; 
+    public function show(Producto $producto): JsonResponse
+    {
+        $producto->load(['categoria', 'ambiente']);
 
-use Illuminate\Http\JsonResponse; 
-
- 
-
-class ProductApiController extends Controller 
-
-{ 
-
-    public function index(): JsonResponse 
-
-    { 
-
-        $products = Product::all(); 
-
-        return response()->json($products, 200); 
-
-    } 
-
- 
-
-    public function show(string $id): JsonResponse 
-
-    { 
-
-        $product = Product::findOrFail($id); 
-
-        return response()->json($product, 200); 
-
-    } 
-
+        return response()->json([
+            'id' => $producto->id,
+            'nombre' => $producto->nombre,
+            'descripcion' => $producto->descripcion,
+            'precio' => $producto->precio,
+            'stock' => $producto->stock,
+            'categoria' => $producto->categoria?->nombre,
+            'ambiente' => $producto->ambiente?->nombre,
+            'url' => route('productos.show', $producto->id),
+        ]);
+    }
 }

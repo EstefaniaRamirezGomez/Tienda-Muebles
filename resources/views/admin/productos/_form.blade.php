@@ -1,5 +1,34 @@
+@php
+    $ingles = app()->getLocale() === 'en';
+
+    // Normaliza los nombres para buscar sus traducciones.
+    $normalizar = function ($valor) {
+        return str_replace(
+            [' ', '-'],
+            '_',
+            \Illuminate\Support\Str::ascii(
+                mb_strtolower(trim((string) $valor))
+            )
+        );
+    };
+
+    // Traduce categorías y ambientes si existe una traducción.
+    $traducirRelacion = function ($nombre, $tipo) use ($normalizar) {
+        $clave = 'messages.' . $tipo . '.' . $normalizar($nombre);
+
+        return \Illuminate\Support\Facades\Lang::has($clave)
+            ? __($clave)
+            : $nombre;
+    };
+@endphp
+
+{{-- NOMBRE DEL PRODUCTO --}}
+
 <div class="campo">
-    <label for="nombre">Nombre del producto</label>
+
+    <label for="nombre">
+        {{ $ingles ? 'Product Name' : 'Nombre del producto' }}
+    </label>
 
     <input
         type="text"
@@ -12,10 +41,16 @@
     @error('nombre')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
 
+{{-- DESCRIPCIÓN --}}
+
 <div class="campo">
-    <label for="descripcion">Descripción</label>
+
+    <label for="descripcion">
+        {{ $ingles ? 'Description' : 'Descripción' }}
+    </label>
 
     <textarea
         id="descripcion"
@@ -27,26 +62,38 @@
     @error('descripcion')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
 
+{{-- IMAGEN --}}
+
 <div class="campo">
-    <label for="imagen">URL de la imagen</label>
+
+    <label for="imagen">
+        {{ $ingles ? 'Image URL' : 'URL de la imagen' }}
+    </label>
 
     <input
         type="url"
         id="imagen"
         name="imagen"
         value="{{ old('imagen', $producto->imagen ?? '') }}"
-        placeholder="https://ejemplo.com/imagen.jpg"
+        placeholder="https://example.com/image.jpg"
     >
 
     @error('imagen')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
 
+{{-- PRECIO --}}
+
 <div class="campo">
-    <label for="precio">Precio</label>
+
+    <label for="precio">
+        {{ $ingles ? 'Price' : 'Precio' }}
+    </label>
 
     <input
         type="number"
@@ -61,10 +108,16 @@
     @error('precio')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
 
+{{-- STOCK --}}
+
 <div class="campo">
-    <label for="stock">Stock</label>
+
+    <label for="stock">
+        {{ $ingles ? 'Available Stock' : 'Stock disponible' }}
+    </label>
 
     <input
         type="number"
@@ -78,19 +131,29 @@
     @error('stock')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
 
+{{-- CATEGORÍA --}}
+
 <div class="campo">
-    <label for="categoria_id">Categoría</label>
+
+    <label for="categoria_id">
+        {{ $ingles ? 'Category' : 'Categoría' }}
+    </label>
 
     <select
         id="categoria_id"
         name="categoria_id"
         required
     >
-        <option value="">Seleccione una categoría</option>
+
+        <option value="">
+            {{ $ingles ? 'Select a category' : 'Seleccione una categoría' }}
+        </option>
 
         @foreach ($categorias as $categoria)
+
             <option
                 value="{{ $categoria->id }}"
                 @selected(
@@ -100,27 +163,39 @@
                     ) == $categoria->id
                 )
             >
-                {{ $categoria->nombre }}
+                {{ $traducirRelacion($categoria->nombre, 'categories') }}
             </option>
+
         @endforeach
+
     </select>
 
     @error('categoria_id')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
 
+{{-- AMBIENTE --}}
+
 <div class="campo">
-    <label for="ambiente_id">Ambiente</label>
+
+    <label for="ambiente_id">
+        {{ $ingles ? 'Room' : 'Ambiente' }}
+    </label>
 
     <select
         id="ambiente_id"
         name="ambiente_id"
         required
     >
-        <option value="">Seleccione un ambiente</option>
+
+        <option value="">
+            {{ $ingles ? 'Select a room' : 'Seleccione un ambiente' }}
+        </option>
 
         @foreach ($ambientes as $ambiente)
+
             <option
                 value="{{ $ambiente->id }}"
                 @selected(
@@ -130,15 +205,20 @@
                     ) == $ambiente->id
                 )
             >
-                {{ $ambiente->nombre }}
+                {{ $traducirRelacion($ambiente->nombre, 'rooms') }}
             </option>
+
         @endforeach
+
     </select>
 
     @error('ambiente_id')
         <p class="error">{{ $message }}</p>
     @enderror
+
 </div>
+
+{{-- BOTÓN DE GUARDAR --}}
 
 <button type="submit" class="boton">
     {{ $textoBoton }}
