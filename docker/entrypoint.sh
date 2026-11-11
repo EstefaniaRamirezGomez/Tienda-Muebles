@@ -5,11 +5,23 @@ set -e
 
 cd /var/www/html
 
-# Esperar a que MySQL acepte conexiones.
+# Esperar a que MySQL acepte conexiones (se prueba con PDO, igual que Laravel).
 echo "Esperando a MySQL en ${DB_HOST}:${DB_PORT:-3306}..."
-until mysqladmin ping -h"${DB_HOST}" -P"${DB_PORT:-3306}" -u"${DB_USERNAME}" -p"${DB_PASSWORD}" --silent; do
+until php -r '
+    try {
+        new PDO(
+            "mysql:host=" . getenv("DB_HOST") . ";port=" . (getenv("DB_PORT") ?: 3306),
+            getenv("DB_USERNAME"),
+            getenv("DB_PASSWORD")
+        );
+    } catch (Throwable $e) {
+        exit(1);
+    }
+' 2>/dev/null; do
     sleep 2
 done
+
+echo "MySQL listo."
 
 php artisan migrate --force
 
