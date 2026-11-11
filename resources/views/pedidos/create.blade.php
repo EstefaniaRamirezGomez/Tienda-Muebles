@@ -1,26 +1,19 @@
 @extends('layouts.app')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Checkout'
-    : 'Finalizar compra'
+@section('titulo', __('tienda.pedidos_create.checkout')
 )
 
 @section('contenido')
 
-@php
-    $ingles = app()->getLocale() === 'en';
-@endphp
 
 <div style="max-width: 1050px; margin: 2rem auto; padding: 0 1rem;">
 
     <h1>
-        {{ $ingles ? 'Checkout' : 'Finalizar compra' }}
+        {{ __('tienda.pedidos_create.checkout') }}
     </h1>
 
     <p>
-        {{ $ingles
-            ? 'Review your order and enter your delivery information.'
-            : 'Revisa tu pedido e ingresa los datos de entrega.' }}
+        {{ __('tienda.pedidos_create.review_your_order_and_enter_your') }}
     </p>
 
     {{-- MENSAJES DE ERROR --}}
@@ -34,9 +27,7 @@
             margin: 1rem 0;
         ">
             <strong>
-                {{ $ingles
-                    ? 'Please review the following errors:'
-                    : 'Revisa los siguientes errores:' }}
+                {{ __('tienda.pedidos_create.please_review_the_following_errors') }}
             </strong>
 
             <ul>
@@ -57,7 +48,7 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Order Summary' : 'Resumen del pedido' }}
+            {{ __('tienda.pedidos_create.order_summary') }}
         </h2>
 
         <div style="overflow-x: auto;">
@@ -67,15 +58,15 @@
                 <thead>
                     <tr style="border-bottom: 2px solid #ddd;">
                         <th style="padding: 0.8rem; text-align: left;">
-                            {{ $ingles ? 'Product' : 'Producto' }}
+                            {{ __('tienda.pedidos_create.product') }}
                         </th>
 
                         <th style="padding: 0.8rem; text-align: center;">
-                            {{ $ingles ? 'Quantity' : 'Cantidad' }}
+                            {{ __('tienda.pedidos_create.quantity') }}
                         </th>
 
                         <th style="padding: 0.8rem; text-align: right;">
-                            {{ $ingles ? 'Subtotal' : 'Subtotal' }}
+                            {{ __('tienda.pedidos_create.subtotal') }}
                         </th>
                     </tr>
                 </thead>
@@ -110,7 +101,7 @@
             font-weight: bold;
             margin-top: 1.5rem;
         ">
-            {{ $ingles ? 'Total:' : 'Total:' }}
+            {{ __('tienda.pedidos_create.total') }}
             ${{ number_format($total, 0, ',', '.') }} COP
         </div>
 
@@ -125,7 +116,7 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Delivery Information' : 'Datos de entrega' }}
+            {{ __('tienda.pedidos_create.delivery_information') }}
         </h2>
 
         <form action="{{ route('pedidos.store') }}" method="POST">
@@ -135,7 +126,7 @@
             <div style="margin-bottom: 1rem;">
 
                 <label for="nombre_receptor" style="display: block; margin-bottom: 0.4rem;">
-                    {{ $ingles ? 'Recipient Name' : 'Nombre de quien recibe' }}
+                    {{ __('tienda.pedidos_create.recipient_name') }}
                 </label>
 
                 <input
@@ -153,7 +144,7 @@
             <div style="margin-bottom: 1rem;">
 
                 <label for="direccion_envio" style="display: block; margin-bottom: 0.4rem;">
-                    {{ $ingles ? 'Delivery Address' : 'Dirección de entrega' }}
+                    {{ __('tienda.pedidos_create.delivery_address') }}
                 </label>
 
                 <input
@@ -163,9 +154,7 @@
                     value="{{ old('direccion_envio') }}"
                     maxlength="255"
                     required
-                    placeholder="{{ $ingles
-                        ? 'Street, number, apartment, additional details'
-                        : 'Calle, número, apartamento, indicaciones adicionales' }}"
+                    placeholder="{{ __('tienda.pedidos_create.street_number_apartment_additional_details') }}"
                     style="width: 100%; padding: 0.75rem; border: 1px solid #ccc; border-radius: 6px;"
                 >
 
@@ -174,7 +163,7 @@
             <div style="margin-bottom: 1rem;">
 
                 <label for="ciudad_envio" style="display: block; margin-bottom: 0.4rem;">
-                    {{ $ingles ? 'City' : 'Ciudad' }}
+                    {{ __('tienda.pedidos_create.city') }}
                 </label>
 
                 <input
@@ -192,7 +181,7 @@
             <div style="margin-bottom: 1.5rem;">
 
                 <label for="telefono_contacto" style="display: block; margin-bottom: 0.4rem;">
-                    {{ $ingles ? 'Contact Phone' : 'Teléfono de contacto' }}
+                    {{ __('tienda.pedidos_create.contact_phone') }}
                 </label>
 
                 <input
@@ -216,13 +205,11 @@
                 margin-bottom: 1.5rem;
             ">
                 <strong>
-                    {{ $ingles ? 'Simulated Purchase' : 'Compra simulada' }}
+                    {{ __('tienda.pedidos_create.simulated_purchase') }}
                 </strong>
 
                 <p style="margin-bottom: 0;">
-                    {{ $ingles
-                        ? 'No real payment will be processed. This order is created for demonstration purposes only.'
-                        : 'No se realizará ningún cobro real. Este pedido se genera únicamente con fines de demostración.' }}
+                    {{ __('tienda.pedidos_create.no_real_payment_will_be_processed') }}
                 </p>
             </div>
 
@@ -245,14 +232,14 @@
                         cursor: pointer;
                     "
                 >
-                    {{ $ingles ? 'Confirm Order' : 'Confirmar pedido' }}
+                    {{ __('tienda.pedidos_create.confirm_order') }}
                 </button>
 
                 <a
                     href="{{ route('carrito.index') }}"
                     style="color: #374151; text-decoration: underline;"
                 >
-                    {{ $ingles ? 'Back to Cart' : 'Volver al carrito' }}
+                    {{ __('tienda.pedidos_create.back_to_cart') }}
                 </a>
 
             </div>

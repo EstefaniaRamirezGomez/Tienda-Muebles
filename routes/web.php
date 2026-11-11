@@ -10,6 +10,7 @@ use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoController;
 use App\Http\Controllers\PedidoController;
+use App\Http\Controllers\ProductoAliadoController;
 use App\Http\Controllers\ReporteProductoController;
 use Illuminate\Support\Facades\Route;
 
@@ -43,6 +44,13 @@ Route::prefix('productos')
         Route::get('/{producto}', [ProductoController::class, 'show'])
             ->name('show');
     });
+
+// ===============================
+// PRODUCTOS ALIADOS (servicio del equipo anterior)
+// ===============================
+
+Route::get('/productos-aliados', [ProductoAliadoController::class, 'index'])
+    ->name('aliados.index');
 
 // ===============================
 // AMBIENTES

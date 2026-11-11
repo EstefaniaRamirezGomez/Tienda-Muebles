@@ -2,7 +2,7 @@
 
 Aplicación web desarrollada en Laravel 12 para una tienda virtual especializada en muebles y artículos de decoración para el hogar.
 
-El proyecto utiliza la arquitectura MVC (Modelo - Vista - Controlador) y permite consultar productos, explorar muebles por ambientes, buscar productos y comparar diferentes opciones. También contará con una sección administrativa para gestionar la información de la tienda.
+El proyecto utiliza la arquitectura MVC (Modelo - Vista - Controlador) con servicios e inversión de dependencias. Permite consultar productos, explorarlos por ambientes, buscarlos, compararlos, comprarlos (compra simulada) y gestionarlos desde un panel de administración. Está disponible en español e inglés.
 
 ## Integrantes
 
@@ -11,77 +11,155 @@ El proyecto utiliza la arquitectura MVC (Modelo - Vista - Controlador) y permite
 
 ## Tecnologías utilizadas
 
-- PHP
-- Laravel 12
+- PHP 8.3 / Laravel 12
 - Blade
-- HTML
-- CSS
-- MySQL
+- MySQL 8
+- Docker y Docker Compose
 - Git y GitHub
 
-## Requisitos
+## Ejecutar con Docker (recomendado)
 
-Para ejecutar el proyecto se necesita:
-
-- PHP 8.2 o superior
-- Composer
-- MySQL
-- Git
-
-## Instalación y ejecución
+Requisitos: Docker y Docker Compose.
 
 1. Clonar el repositorio:
 
+   ```bash
    git clone https://github.com/EstefaniaRamirezGomez/Tienda-Muebles.git
-
-2. Entrar a la carpeta del proyecto:
-
    cd Tienda-Muebles
+   ```
 
-3. Instalar las dependencias:
+2. Crear el archivo de configuración y ajustar las claves de la base de datos:
 
-   composer install
-
-4. Crear el archivo de configuración:
-
+   ```bash
    cp .env.example .env
+   ```
 
-5. Generar la clave de Laravel:
+   En `.env` cambie `DB_PASSWORD` y `DB_ROOT_PASSWORD`. Para producción use `APP_ENV=production` y `APP_DEBUG=false`.
 
-   php artisan key:generate
+3. Generar la clave de Laravel (sin tener PHP instalado):
 
-6. Configurar la conexión a MySQL en el archivo `.env`.
+   ```bash
+   docker run --rm -v "$PWD":/app -w /app php:8.3-cli php -r "echo 'base64:'.base64_encode(random_bytes(32)).PHP_EOL;"
+   ```
 
-7. Ejecutar las migraciones:
+   Copie el resultado en `APP_KEY=` dentro de `.env`.
 
-   php artisan migrate
+4. Levantar los contenedores:
 
-8. Iniciar el servidor:
+   ```bash
+   docker compose up -d --build
+   ```
 
-   php artisan serve
+   Al arrancar, el contenedor espera a MySQL, ejecuta las migraciones y, si la base está vacía, carga los datos de prueba.
 
-## Ruta principal
+5. Abrir `http://localhost/` (o la IP del servidor).
 
-Después de iniciar el servidor, la aplicación se puede abrir desde:
+Comandos útiles:
 
-http://127.0.0.1:8000/
+```bash
+docker compose logs -f app          # ver logs
+docker compose exec app php artisan test   # pruebas unitarias
+docker compose down                 # detener (los datos de MySQL se conservan)
+```
 
-Esta es la ruta principal de la tienda.
+## Ejecutar sin Docker
+
+Requisitos: PHP 8.2+, Composer y MySQL.
+
+```bash
+composer install
+cp .env.example .env      # configure DB_HOST, DB_DATABASE, DB_USERNAME y DB_PASSWORD
+php artisan key:generate
+php artisan migrate --seed
+php artisan serve
+```
+
+La aplicación queda en `http://127.0.0.1:8000/`.
+
+## Usuarios de prueba
+
+| Rol | Correo | Contraseña |
+|-----|--------|------------|
+| Administrador | admin@ejemplo.com | password |
+| Cliente | cliente@ejemplo.com | password |
 
 ## Rutas principales
+
+Usuario final:
 
 - `/` - Página de inicio
 - `/productos` - Catálogo de productos
 - `/productos/buscar` - Búsqueda de productos
-- `/productos/destacados` - Productos destacados
+- `/productos/destacados` - Más vendidos y mejor calificados
 - `/productos/comparar` - Comparación de productos
 - `/ambientes` - Productos organizados por ambientes
+- `/productos-aliados` - Productos del equipo aliado (servicio consumido)
+- `/carrito` y `/pedidos` - Compra simulada e historial (requiere sesión)
+
+Administrador (`/admin`, requiere rol admin):
+
+- `/admin/productos` - CRUD de productos
+- `/admin/pedidos` - Gestión de pedidos y estados de envío
+- `/admin/reportes/productos?formato=csv|json` - Reporte de inventario
+
+## Servicio web que proveemos (JSON)
+
+- `GET /api/productos` - Productos en stock, con el enlace directo a cada producto.
+- `GET /api/productos/{id}` - Detalle de un producto.
+
+Ejemplo de respuesta:
+
+```json
+{
+  "total": 10,
+  "productos": [
+    {
+      "id": 1,
+      "nombre": "Sofá Nórdico 3 puestos",
+      "descripcion": "Mueble de la categoría Sofás, ideal para Sala.",
+      "precio": "1890000.00",
+      "stock": 17,
+      "categoria": "Sofás",
+      "ambiente": "Sala",
+      "url": "http://IP-DEL-SERVIDOR/productos/1"
+    }
+  ]
+}
+```
+
+## Servicios que consumimos
+
+- **Equipo aliado:** su servicio JSON se muestra en `/productos-aliados`. La URL se configura en `.env` con `SERVICIO_ALIADO_URL` (y opcionalmente `SERVICIO_ALIADO_NOMBRE`). Si el servicio no responde, la página muestra un aviso en lugar de un error.
+- **MyMemory (servicio de un tercero):** API de traducción usada para traducir automáticamente al inglés el nombre y la descripción de los productos al guardarlos (`app/Services/TraduccionService.php`).
+
+## Inversión de dependencias
+
+`App\Contracts\ReporteProductoInterface` tiene dos implementaciones: `ReporteProductosCsv` y `ReporteProductosJson`. El binding está en `AppServiceProvider` y elige la clase según el parámetro `formato`; `ReporteProductoController` solo depende de la interfaz.
+
+## Idiomas
+
+Todos los textos están en `resources/lang/es` y `resources/lang/en`. El idioma se cambia desde el menú (`/idioma/es` o `/idioma/en`).
+
+## Pruebas
+
+```bash
+php artisan test
+```
+
+Las pruebas unitarias de `tests/Unit/ReporteProductosTest.php` verifican los dos generadores de reportes.
+
+## Datos de prueba (SQL)
+
+`database/datos.sql` contiene las filas de prueba. Se genera desde el servidor (con los contenedores arriba) con:
+
+```bash
+sh docker/exportar-datos.sh
+```
 
 ## Arquitectura
 
-El proyecto utiliza el patrón MVC de Laravel:
-
-- **Modelos:** representan la información y las relaciones del dominio.
-- **Vistas:** desarrolladas con Blade para presentar la información.
-- **Controladores:** reciben las solicitudes y coordinan la lógica de la aplicación.
-- **Rutas:** definidas principalmente en `routes/web.php`.
+- **Modelos:** información y relaciones del dominio (`app/Models`).
+- **Vistas:** Blade (`resources/views`), con layouts separados para tienda y administración.
+- **Controladores:** reciben las solicitudes y coordinan la lógica (`app/Http/Controllers`).
+- **Servicios:** lógica reutilizable y comunicación con APIs externas (`app/Services`).
+- **Rutas:** `routes/web.php` (aplicación) y `routes/api.php` (servicio JSON).

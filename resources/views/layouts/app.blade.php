@@ -6,7 +6,7 @@
 
     <title>
         @yield('titulo', __('messages.products'))
-        · {{ app()->getLocale() === 'en' ? 'Furniture & Decoration' : 'Muebles & Decoración' }}
+        · {{ __('tienda.layouts_app.furniture_decoration') }}
     </title>
 
     <style>
@@ -376,9 +376,7 @@
                 href="{{ route('inicio') }}"
                 class="logo-inicio"
             >
-                🪑 {{ app()->getLocale() === 'en'
-                    ? 'Furniture & Decoration'
-                    : 'Muebles & Decoración' }}
+                🪑 {{ __('tienda.layouts_app.furniture_decoration') }}
             </a>
         </h1>
 
@@ -386,21 +384,22 @@
 
             {{-- CATÁLOGO --}}
             <a href="{{ route('productos.index') }}">
-                {{ app()->getLocale() === 'en'
-                    ? 'Catalog'
-                    : 'Catálogo' }}
+                {{ __('tienda.layouts_app.catalog') }}
             </a>
 
             {{-- AMBIENTES --}}
             <a href="{{ route('ambientes.index') }}">
-                {{ app()->getLocale() === 'en'
-                    ? 'Rooms'
-                    : 'Ambientes' }}
+                {{ __('tienda.layouts_app.rooms') }}
             </a>
 
             {{-- DESTACADOS --}}
             <a href="{{ route('productos.destacados') }}">
                 {{ __('messages.featured') }}
+            </a>
+
+            {{-- PRODUCTOS ALIADOS --}}
+            <a href="{{ route('aliados.index') }}">
+                {{ __('tienda.aliados.menu') }}
             </a>
 
             @auth
@@ -425,18 +424,14 @@
 
                 {{-- MIS PEDIDOS --}}
                 <a href="{{ route('pedidos.index') }}">
-                    {{ app()->getLocale() === 'en'
-                        ? 'My Orders'
-                        : 'Mis pedidos' }}
+                    {{ __('tienda.layouts_app.my_orders') }}
                 </a>
 
                 {{-- PANEL ADMINISTRADOR --}}
                 @if (auth()->user()->esAdmin())
 
                     <a href="{{ route('admin.inicio') }}">
-                        {{ app()->getLocale() === 'en'
-                            ? 'Admin panel'
-                            : 'Panel administrador' }}
+                        {{ __('tienda.layouts_app.admin_panel') }}
                     </a>
 
                 @endif
@@ -463,9 +458,7 @@
 
                 {{-- REGISTRO --}}
                 <a href="{{ route('register') }}">
-                    {{ app()->getLocale() === 'en'
-                        ? 'Register'
-                        : 'Registrarse' }}
+                    {{ __('tienda.layouts_app.register') }}
                 </a>
 
             @endauth
@@ -473,7 +466,7 @@
             {{-- SELECTOR DE IDIOMA --}}
             <div
                 class="selector-idioma"
-                aria-label="{{ app()->getLocale() === 'en' ? 'Select language' : 'Seleccionar idioma' }}"
+                aria-label="{{ __('tienda.layouts_app.select_language') }}"
             >
 
                 <a
@@ -488,10 +481,10 @@
 
                 <a
                     href="{{ route('idioma.cambiar', 'en') }}"
-                    class="{{ app()->getLocale() === 'en' ? 'activo' : '' }}"
+                    class="{{ __('tienda.layouts_app.activo') }}"
                     lang="en"
                     aria-label="English"
-                    aria-current="{{ app()->getLocale() === 'en' ? 'true' : 'false' }}"
+                    aria-current="{{ __('tienda.layouts_app.true') }}"
                 >
                     EN
                 </a>

@@ -1,14 +1,11 @@
 @extends('layouts.app')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'My Orders'
-    : 'Mis pedidos'
+@section('titulo', __('tienda.pedidos_index.my_orders')
 )
 
 @section('contenido')
 
 @php
-    $ingles = app()->getLocale() === 'en';
 
     $estados = [
         'pendiente' => [
@@ -57,13 +54,11 @@
 ">
 
     <h1>
-        {{ $ingles ? 'My Orders' : 'Mis pedidos' }}
+        {{ __('tienda.pedidos_index.my_orders') }}
     </h1>
 
     <p>
-        {{ $ingles
-            ? 'Check your purchase history and track your orders.'
-            : 'Consulta tu historial de compras y el seguimiento de tus pedidos.' }}
+        {{ __('tienda.pedidos_index.check_your_purchase_history_and_track') }}
     </p>
 
     @if ($pedidos->isEmpty())
@@ -83,15 +78,11 @@
             </div>
 
             <h2>
-                {{ $ingles
-                    ? 'You have no orders yet'
-                    : 'Todavía no tienes pedidos' }}
+                {{ __('tienda.pedidos_index.you_have_no_orders_yet') }}
             </h2>
 
             <p>
-                {{ $ingles
-                    ? 'Explore our catalog and place your first order.'
-                    : 'Explora nuestro catálogo y realiza tu primera compra.' }}
+                {{ __('tienda.pedidos_index.explore_our_catalog_and_place_your') }}
             </p>
 
             <a
@@ -106,7 +97,7 @@
                     text-decoration: none;
                 "
             >
-                {{ $ingles ? 'View Products' : 'Ver productos' }}
+                {{ __('tienda.pedidos_index.view_products') }}
             </a>
 
         </div>
@@ -150,12 +141,12 @@
 
                         <div>
                             <h2 style="margin-top: 0;">
-                                {{ $ingles ? 'Order' : 'Pedido' }}
+                                {{ __('tienda.pedidos_index.order') }}
                                 #{{ $pedido->id }}
                             </h2>
 
                             <p style="color: #6b7280;">
-                                {{ $ingles ? 'Date:' : 'Fecha:' }}
+                                {{ __('tienda.pedidos_index.date') }}
                                 {{ $pedido->fecha->format('d/m/Y') }}
                             </p>
                         </div>
@@ -168,7 +159,7 @@
                             color: {{ $estado['color'] }};
                             font-weight: bold;
                         ">
-                            {{ $estado[$ingles ? 'en' : 'es'] }}
+                            {{ $estado[__('tienda.pedidos_index.en')] }}
                         </span>
 
                     </div>
@@ -185,7 +176,7 @@
 
                         <div>
                             <div style="color: #6b7280; font-size: 0.9rem;">
-                                {{ $ingles ? 'Items' : 'Artículos' }}
+                                {{ __('tienda.pedidos_index.items') }}
                             </div>
 
                             <strong>
@@ -195,7 +186,7 @@
 
                         <div>
                             <div style="color: #6b7280; font-size: 0.9rem;">
-                                {{ $ingles ? 'Delivery City' : 'Ciudad de entrega' }}
+                                {{ __('tienda.pedidos_index.delivery_city') }}
                             </div>
 
                             <strong>
@@ -205,7 +196,7 @@
 
                         <div>
                             <div style="color: #6b7280; font-size: 0.9rem;">
-                                {{ $ingles ? 'Order Total' : 'Total del pedido' }}
+                                {{ __('tienda.pedidos_index.order_total') }}
                             </div>
 
                             <strong>
@@ -226,7 +217,7 @@
                             text-decoration: none;
                         "
                     >
-                        {{ $ingles ? 'View Details' : 'Ver detalles' }}
+                        {{ __('tienda.pedidos_index.view_details') }}
                     </a>
 
                 </article>

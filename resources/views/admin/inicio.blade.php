@@ -2,24 +2,19 @@
 
 @extends('layouts.admin')
 
-@section('titulo', app()->getLocale() === 'en' ? 'Dashboard' : 'Inicio')
+@section('titulo', __('tienda.admin_inicio.dashboard'))
 
 @section('contenido')
 
-    @php
-        $ingles = app()->getLocale() === 'en';
-    @endphp
 
     {{-- ENCABEZADO DEL DASHBOARD --}}
 
     <h2>
-        {{ $ingles ? 'Administration Dashboard' : 'Panel de administración' }}
+        {{ __('tienda.admin_inicio.administration_dashboard') }}
     </h2>
 
     <p>
-        {{ $ingles
-            ? 'Manage the main information of your store.'
-            : 'Gestiona la información principal de la tienda.' }}
+        {{ __('tienda.admin_inicio.manage_the_main_information_of_your') }}
     </p>
 
     {{-- MÉTRICAS GENERALES --}}
@@ -28,7 +23,7 @@
 
         <div class="metrica">
             <span>
-                {{ $ingles ? 'Products' : 'Productos' }}
+                {{ __('tienda.admin_inicio.products') }}
             </span>
 
             <strong>
@@ -38,7 +33,7 @@
 
         <div class="metrica">
             <span>
-                {{ $ingles ? 'Categories' : 'Categorías' }}
+                {{ __('tienda.admin_inicio.categories') }}
             </span>
 
             <strong>
@@ -48,7 +43,7 @@
 
         <div class="metrica">
             <span>
-                {{ $ingles ? 'Orders' : 'Pedidos' }}
+                {{ __('tienda.admin_inicio.orders') }}
             </span>
 
             <strong>
@@ -58,7 +53,7 @@
 
         <div class="metrica">
             <span>
-                {{ $ingles ? 'Customers' : 'Clientes' }}
+                {{ __('tienda.admin_inicio.customers') }}
             </span>
 
             <strong>
@@ -82,13 +77,11 @@
     >
 
         <h3>
-            {{ $ingles ? 'Inventory Reports' : 'Reportes de inventario' }}
+            {{ __('tienda.admin_inicio.inventory_reports') }}
         </h3>
 
         <p>
-            {{ $ingles
-                ? 'Download a report containing the current information of the products registered in the store.'
-                : 'Descarga un reporte con la información actual de los productos registrados en la tienda.' }}
+            {{ __('tienda.admin_inicio.download_a_report_containing_the_current') }}
         </p>
 
         <p
@@ -97,9 +90,7 @@
                 margin-bottom: 1.5rem;
             "
         >
-            {{ $ingles
-                ? 'The report includes product ID, name, price, available stock, and category.'
-                : 'El reporte incluye identificador, nombre, precio, stock disponible y categoría.' }}
+            {{ __('tienda.admin_inicio.the_report_includes_product_id_name') }}
         </p>
 
         {{-- OPCIONES DE DESCARGA --}}
@@ -129,7 +120,7 @@
                 "
             >
                 &#11015;
-                {{ $ingles ? 'Download CSV' : 'Descargar CSV' }}
+                {{ __('tienda.admin_inicio.download_csv') }}
             </a>
 
             {{-- DESCARGAR JSON --}}
@@ -148,7 +139,7 @@
                 "
             >
                 &#11015;
-                {{ $ingles ? 'Download JSON' : 'Descargar JSON' }}
+                {{ __('tienda.admin_inicio.download_json') }}
             </a>
 
         </div>
@@ -169,24 +160,20 @@
             <p style="margin-bottom: 0.5rem;">
 
                 <strong>
-                    {{ $ingles ? 'CSV Format:' : 'Formato CSV:' }}
+                    {{ __('tienda.admin_inicio.csv_format') }}
                 </strong>
 
-                {{ $ingles
-                    ? 'Allows you to view and analyze data in Excel and other spreadsheet applications.'
-                    : 'Permite consultar los datos en Excel y otras herramientas de hojas de cálculo.' }}
+                {{ __('tienda.admin_inicio.allows_you_to_view_and_analyze') }}
 
             </p>
 
             <p style="margin: 0;">
 
                 <strong>
-                    {{ $ingles ? 'JSON Format:' : 'Formato JSON:' }}
+                    {{ __('tienda.admin_inicio.json_format') }}
                 </strong>
 
-                {{ $ingles
-                    ? 'Allows you to use the data in applications, services, and external systems.'
-                    : 'Permite utilizar los datos en aplicaciones, servicios y sistemas externos.' }}
+                {{ __('tienda.admin_inicio.allows_you_to_use_the_data') }}
 
             </p>
 
@@ -200,9 +187,7 @@
         class="aviso"
         style="margin-top: 1.5rem;"
     >
-        {{ $ingles
-            ? 'Use the sidebar menu to manage the products in your store.'
-            : 'Utiliza el menú lateral para administrar los productos de la tienda.' }}
+        {{ __('tienda.admin_inicio.use_the_sidebar_menu_to_manage') }}
     </p>
 
 @endsection

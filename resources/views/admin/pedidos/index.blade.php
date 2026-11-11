@@ -1,14 +1,11 @@
 @extends('layouts.admin')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Order Management'
-    : 'Gestión de pedidos'
+@section('titulo', __('tienda.admin_pedidos_index.order_management')
 )
 
 @section('contenido')
 
 @php
-    $ingles = app()->getLocale() === 'en';
 
     $estados = [
         'pendiente' => [
@@ -64,13 +61,11 @@
 
         <div>
             <h1 style="margin-bottom: 0.5rem;">
-                {{ $ingles ? 'Order Management' : 'Gestión de pedidos' }}
+                {{ __('tienda.admin_pedidos_index.order_management') }}
             </h1>
 
             <p style="color: #6b7280;">
-                {{ $ingles
-                    ? 'Review customer orders and manage their delivery status.'
-                    : 'Consulta los pedidos de los clientes y administra su estado de entrega.' }}
+                {{ __('tienda.admin_pedidos_index.review_customer_orders_and_manage_their') }}
             </p>
         </div>
 
@@ -81,7 +76,7 @@
             border-radius: 8px;
             font-weight: bold;
         ">
-            {{ $ingles ? 'Total Orders:' : 'Total de pedidos:' }}
+            {{ __('tienda.admin_pedidos_index.total_orders') }}
             {{ $pedidos->total() }}
         </div>
 
@@ -126,15 +121,11 @@
             <div style="text-align: center; padding: 3rem 1rem;">
 
                 <h2>
-                    {{ $ingles
-                        ? 'No orders registered'
-                        : 'No hay pedidos registrados' }}
+                    {{ __('tienda.admin_pedidos_index.no_orders_registered') }}
                 </h2>
 
                 <p style="color: #6b7280;">
-                    {{ $ingles
-                        ? 'Customer orders will appear here once a purchase is confirmed.'
-                        : 'Los pedidos de los clientes aparecerán aquí cuando se confirme una compra.' }}
+                    {{ __('tienda.admin_pedidos_index.customer_orders_will_appear_here_once') }}
                 </p>
 
             </div>
@@ -154,27 +145,27 @@
                     ">
 
                         <th style="padding: 0.9rem; text-align: left;">
-                            {{ $ingles ? 'Order' : 'Pedido' }}
+                            {{ __('tienda.admin_pedidos_index.order') }}
                         </th>
 
                         <th style="padding: 0.9rem; text-align: left;">
-                            {{ $ingles ? 'Customer' : 'Cliente' }}
+                            {{ __('tienda.admin_pedidos_index.customer') }}
                         </th>
 
                         <th style="padding: 0.9rem; text-align: left;">
-                            {{ $ingles ? 'Date' : 'Fecha' }}
+                            {{ __('tienda.admin_pedidos_index.date') }}
                         </th>
 
                         <th style="padding: 0.9rem; text-align: right;">
-                            {{ $ingles ? 'Total' : 'Total' }}
+                            {{ __('tienda.admin_pedidos_index.total') }}
                         </th>
 
                         <th style="padding: 0.9rem; text-align: center;">
-                            {{ $ingles ? 'Status' : 'Estado' }}
+                            {{ __('tienda.admin_pedidos_index.status') }}
                         </th>
 
                         <th style="padding: 0.9rem; text-align: center;">
-                            {{ $ingles ? 'Actions' : 'Acciones' }}
+                            {{ __('tienda.admin_pedidos_index.actions') }}
                         </th>
 
                     </tr>
@@ -204,7 +195,7 @@
                             <td style="padding: 1rem;">
                                 <strong>
                                     {{ $pedido->usuario?->name
-                                        ?? ($ingles ? 'Unknown customer' : 'Cliente no disponible') }}
+                                        ?? (__('tienda.admin_pedidos_index.unknown_customer')) }}
                                 </strong>
 
                                 @if ($pedido->usuario?->email)
@@ -243,7 +234,7 @@
                                     font-weight: bold;
                                     white-space: nowrap;
                                 ">
-                                    {{ $estado[$ingles ? 'en' : 'es'] }}
+                                    {{ $estado[__('tienda.admin_pedidos_index.en')] }}
                                 </span>
                             </td>
 
@@ -261,7 +252,7 @@
                                         white-space: nowrap;
                                     "
                                 >
-                                    {{ $ingles ? 'View Details' : 'Ver detalles' }}
+                                    {{ __('tienda.admin_pedidos_index.view_details') }}
                                 </a>
                             </td>
 

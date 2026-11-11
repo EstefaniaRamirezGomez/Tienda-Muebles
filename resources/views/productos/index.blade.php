@@ -1,37 +1,12 @@
 @extends('layouts.app')
 
-@section('titulo', app()->getLocale() === 'en' ? 'Catalog' : 'Catálogo')
+@section('titulo', __('tienda.productos_index.catalog'))
 
 @section('contenido')
 
-    @php
-        $ingles = app()->getLocale() === 'en';
-
-        $normalizar = function ($valor) {
-            return str_replace(
-                [' ', '-'],
-                '_',
-                \Illuminate\Support\Str::ascii(
-                    mb_strtolower(trim($valor))
-                )
-            );
-        };
-
-        $traducirRelacion = function ($nombre, $tipo, $alternativa) use ($normalizar) {
-            if (!$nombre) {
-                return $alternativa;
-            }
-
-            $clave = 'messages.' . $tipo . '.' . $normalizar($nombre);
-
-            return \Illuminate\Support\Facades\Lang::has($clave)
-                ? __($clave)
-                : $nombre;
-        };
-    @endphp
 
     <h2>
-        {{ $ingles ? 'Product Catalog' : 'Catálogo de productos' }}
+        {{ __('tienda.productos_index.product_catalog') }}
     </h2>
 
     {{-- MENSAJES --}}
@@ -57,13 +32,13 @@
             type="search"
             name="q"
             value="{{ $termino ?? '' }}"
-            placeholder="{{ $ingles ? 'Search by name... (e.g. sofa)' : 'Buscar por nombre... (ej: sofá)' }}"
-            aria-label="{{ $ingles ? 'Search products' : 'Buscar productos' }}"
+            placeholder="{{ __('tienda.productos_index.search_by_name_e_g_sofa') }}"
+            aria-label="{{ __('tienda.productos_index.search_products') }}"
             style="width:280px;"
         >
 
         <button type="submit" class="boton">
-            {{ $ingles ? 'Search' : 'Buscar' }}
+            {{ __('tienda.productos_index.search') }}
         </button>
 
         @if (!empty($termino))
@@ -71,7 +46,7 @@
                 href="{{ route('productos.index') }}"
                 class="boton boton-secundario"
             >
-                {{ $ingles ? 'Clear' : 'Limpiar' }}
+                {{ __('tienda.productos_index.clear') }}
             </a>
         @endif
     </form>
@@ -81,14 +56,10 @@
 
         <p class="vacio">
             @if (!empty($termino))
-                {{ $ingles
-                    ? 'No products found for'
-                    : 'No se encontraron productos para' }}
+                {{ __('tienda.productos_index.no_products_found_for') }}
                 "{{ $termino }}".
             @else
-                {{ $ingles
-                    ? 'There are no products available in the catalog.'
-                    : 'No hay productos disponibles en el catálogo.' }}
+                {{ __('tienda.productos_index.there_are_no_products_available_in') }}
             @endif
         </p>
 
@@ -98,9 +69,7 @@
         <div id="form-comparar">
 
             <p class="vacio">
-                {{ $ingles
-                    ? 'Select 2 or 3 products to compare their specifications.'
-                    : 'Marca entre 2 y 3 productos para comparar su ficha técnica.' }}
+                {{ __('tienda.productos_index.select_2_or_3_products_to') }}
             </p>
 
             <div class="grid">
@@ -110,17 +79,9 @@
                     @php
                         $nombreTraducido = $producto->nombre_localizado;
 
-                        $categoriaTraducida = $traducirRelacion(
-                            $producto->categoria?->nombre,
-                            'categories',
-                            $ingles ? 'No category' : 'Sin categoría'
-                        );
+                        $categoriaTraducida = $producto->categoria?->nombre_localizado ?? __('tienda.productos_index.no_category');
 
-                        $ambienteTraducido = $traducirRelacion(
-                            $producto->ambiente?->nombre,
-                            'rooms',
-                            $ingles ? 'No room' : 'Sin ambiente'
-                        );
+                        $ambienteTraducido = $producto->ambiente?->nombre_localizado ?? __('tienda.productos_index.no_room');
                     @endphp
 
                     <div class="producto-card">
@@ -142,7 +103,7 @@
                                 class="check-comparar"
                             >
 
-                            {{ $ingles ? 'Compare' : 'Comparar' }}
+                            {{ __('tienda.productos_index.compare') }}
                         </label>
 
                         {{-- IMAGEN --}}
@@ -181,7 +142,7 @@
 
                         {{-- STOCK --}}
                         <p style="font-size:0.85rem;">
-                            {{ $ingles ? 'Available stock:' : 'Stock disponible:' }}
+                            {{ __('tienda.productos_index.available_stock') }}
                             {{ $producto->stock }}
                         </p>
 
@@ -190,7 +151,7 @@
                             href="{{ route('productos.show', $producto) }}"
                             class="boton"
                         >
-                            {{ $ingles ? 'View details' : 'Ver detalle' }}
+                            {{ __('tienda.productos_index.view_details') }}
                         </a>
 
                         {{-- CARRITO --}}
@@ -215,18 +176,14 @@
                                         type="submit"
                                         class="boton"
                                     >
-                                        {{ $ingles
-                                            ? 'Add to cart'
-                                            : 'Agregar al carrito' }}
+                                        {{ __('tienda.productos_index.add_to_cart') }}
                                     </button>
                                 </form>
 
                             @else
 
                                 <p class="vacio">
-                                    {{ $ingles
-                                        ? 'Out of stock'
-                                        : 'Producto agotado' }}
+                                    {{ __('tienda.productos_index.out_of_stock') }}
                                 </p>
 
                             @endif
@@ -238,9 +195,7 @@
                                 class="boton boton-secundario"
                                 style="margin-top:0.5rem;"
                             >
-                                {{ $ingles
-                                    ? 'Log in to purchase'
-                                    : 'Inicia sesión para comprar' }}
+                                {{ __('tienda.productos_index.log_in_to_purchase') }}
                             </a>
 
                         @endauth
@@ -259,9 +214,7 @@
                 id="btn-comparar"
                 disabled
             >
-                {{ $ingles
-                    ? 'Compare selected products'
-                    : 'Comparar seleccionados' }}
+                {{ __('tienda.productos_index.compare_selected_products') }}
             </button>
 
         </div>
@@ -270,7 +223,7 @@
         @if ($productos->hasPages())
 
             <nav
-                aria-label="{{ $ingles ? 'Product pagination' : 'Paginación de productos' }}"
+                aria-label="{{ __('tienda.productos_index.product_pagination') }}"
                 style="
                     display:flex;
                     justify-content:center;
@@ -288,7 +241,7 @@
                         class="boton boton-secundario"
                         style="opacity:0.5;"
                     >
-                        {{ $ingles ? 'Previous' : 'Anterior' }}
+                        {{ __('tienda.productos_index.previous') }}
                     </span>
 
                 @else
@@ -297,16 +250,16 @@
                         href="{{ $productos->previousPageUrl() }}"
                         class="boton boton-secundario"
                     >
-                        {{ $ingles ? 'Previous' : 'Anterior' }}
+                        {{ __('tienda.productos_index.previous') }}
                     </a>
 
                 @endif
 
                 {{-- PÁGINA ACTUAL --}}
                 <span style="font-weight:600;">
-                    {{ $ingles ? 'Page' : 'Página' }}
+                    {{ __('tienda.productos_index.page') }}
                     {{ $productos->currentPage() }}
-                    {{ $ingles ? 'of' : 'de' }}
+                    {{ __('tienda.productos_index.of') }}
                     {{ $productos->lastPage() }}
                 </span>
 
@@ -317,7 +270,7 @@
                         href="{{ $productos->nextPageUrl() }}"
                         class="boton boton-secundario"
                     >
-                        {{ $ingles ? 'Next' : 'Siguiente' }}
+                        {{ __('tienda.productos_index.next') }}
                     </a>
 
                 @else
@@ -326,7 +279,7 @@
                         class="boton boton-secundario"
                         style="opacity:0.5;"
                     >
-                        {{ $ingles ? 'Next' : 'Siguiente' }}
+                        {{ __('tienda.productos_index.next') }}
                     </span>
 
                 @endif
@@ -343,13 +296,13 @@
                 margin-bottom:1.5rem;
             "
         >
-            {{ $ingles ? 'Showing' : 'Mostrando' }}
+            {{ __('tienda.productos_index.showing') }}
             {{ $productos->firstItem() }}
-            {{ $ingles ? 'to' : 'a' }}
+            {{ __('tienda.productos_index.to') }}
             {{ $productos->lastItem() }}
-            {{ $ingles ? 'of' : 'de' }}
+            {{ __('tienda.productos_index.of') }}
             {{ $productos->total() }}
-            {{ $ingles ? 'products' : 'productos' }}
+            {{ __('tienda.productos_index.products') }}
         </p>
 
     @endif

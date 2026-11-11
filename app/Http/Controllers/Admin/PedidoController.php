@@ -44,7 +44,6 @@ class PedidoController extends Controller
         Pedido $pedido
     ): RedirectResponse {
 
-        $ingles = app()->getLocale() === 'en';
 
         // Estados permitidos.
         $estadosPermitidos = [
@@ -63,13 +62,9 @@ class PedidoController extends Controller
                 ],
             ],
             [
-                'estado.required' => $ingles
-                    ? 'Please select an order status.'
-                    : 'Debes seleccionar un estado para el pedido.',
+                'estado.required' => __('tienda.ctrl_admin_pedido.please_select_an_order_status'),
 
-                'estado.in' => $ingles
-                    ? 'The selected order status is invalid.'
-                    : 'El estado seleccionado no es válido.',
+                'estado.in' => __('tienda.ctrl_admin_pedido.the_selected_order_status_is_invalid'),
             ]
         );
 
@@ -79,9 +74,7 @@ class PedidoController extends Controller
         if ($pedido->estado === 'cancelado') {
             return back()->with(
                 'error',
-                $ingles
-                    ? 'Cancelled orders cannot be modified.'
-                    : 'No se pueden modificar pedidos cancelados.'
+                __('tienda.ctrl_admin_pedido.cancelled_orders_cannot_be_modified')
             );
         }
 
@@ -89,9 +82,7 @@ class PedidoController extends Controller
         if ($pedido->estado === 'entregado') {
             return back()->with(
                 'error',
-                $ingles
-                    ? 'Delivered orders cannot be modified.'
-                    : 'No se pueden modificar pedidos entregados.'
+                __('tienda.ctrl_admin_pedido.delivered_orders_cannot_be_modified')
             );
         }
 
@@ -112,9 +103,7 @@ class PedidoController extends Controller
         if (!array_key_exists($estadoActual, $ordenEstados)) {
             return back()->with(
                 'error',
-                $ingles
-                    ? 'The current order status is not recognized.'
-                    : 'El estado actual del pedido no es reconocido.'
+                __('tienda.ctrl_admin_pedido.the_current_order_status_is_not')
             );
         }
 
@@ -125,9 +114,7 @@ class PedidoController extends Controller
         ) {
             return back()->with(
                 'error',
-                $ingles
-                    ? 'An order cannot return to a previous status.'
-                    : 'Un pedido no puede regresar a un estado anterior.'
+                __('tienda.ctrl_admin_pedido.an_order_cannot_return_to_a')
             );
         }
 
@@ -138,9 +125,7 @@ class PedidoController extends Controller
         ) {
             return back()->with(
                 'error',
-                $ingles
-                    ? 'You must complete the previous shipping stage first.'
-                    : 'Debes completar primero la etapa anterior del envío.'
+                __('tienda.ctrl_admin_pedido.you_must_complete_the_previous_shipping')
             );
         }
 
@@ -148,9 +133,7 @@ class PedidoController extends Controller
         if ($estadoActual === $estadoNuevo) {
             return back()->with(
                 'exito',
-                $ingles
-                    ? 'The order already has this status.'
-                    : 'El pedido ya tiene este estado.'
+                __('tienda.ctrl_admin_pedido.the_order_already_has_this_status')
             );
         }
 
@@ -161,9 +144,7 @@ class PedidoController extends Controller
             ->route('admin.pedidos.show', $pedido)
             ->with(
                 'exito',
-                $ingles
-                    ? 'Order status updated successfully.'
-                    : 'Estado del pedido actualizado correctamente.'
+                __('tienda.ctrl_admin_pedido.order_status_updated_successfully')
             );
     }
 }

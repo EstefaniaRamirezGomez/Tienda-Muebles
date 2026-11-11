@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    // Servicio JSON del equipo aliado (Entregable 2).
+    'aliado' => [
+        'url' => env('SERVICIO_ALIADO_URL'),
+        'nombre' => env('SERVICIO_ALIADO_NOMBRE'),
+    ],
+
 ];

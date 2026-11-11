@@ -1,11 +1,10 @@
 @extends('layouts.app')
 
-@section('titulo', app()->getLocale() === 'en' ? 'Shopping Cart' : 'Carrito de compras')
+@section('titulo', __('tienda.carrito_index.shopping_cart'))
 
 @section('contenido')
 
     @php
-        $ingles = app()->getLocale() === 'en';
 
         // Consultar los productos para obtener sus nombres traducidos.
         $idsProductos = collect($carrito ?? [])
@@ -21,7 +20,7 @@
     @endphp
 
     <h2>
-        {{ $ingles ? 'Shopping Cart' : 'Carrito de compras' }}
+        {{ __('tienda.carrito_index.shopping_cart') }}
     </h2>
 
     {{-- MENSAJES --}}
@@ -53,16 +52,14 @@
         <div class="tarjeta">
 
             <p class="vacio">
-                {{ $ingles
-                    ? 'Your shopping cart is empty.'
-                    : 'Tu carrito está vacío.' }}
+                {{ __('tienda.carrito_index.your_shopping_cart_is_empty') }}
             </p>
 
             <a
                 href="{{ route('productos.index') }}"
                 class="boton"
             >
-                {{ $ingles ? 'View Products' : 'Ver productos' }}
+                {{ __('tienda.carrito_index.view_products') }}
             </a>
 
         </div>
@@ -77,23 +74,23 @@
                 <thead>
                     <tr>
                         <th>
-                            {{ $ingles ? 'Product' : 'Producto' }}
+                            {{ __('tienda.carrito_index.product') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Price' : 'Precio' }}
+                            {{ __('tienda.carrito_index.price') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Quantity' : 'Cantidad' }}
+                            {{ __('tienda.carrito_index.quantity') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Subtotal' : 'Subtotal' }}
+                            {{ __('tienda.carrito_index.subtotal') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Actions' : 'Acciones' }}
+                            {{ __('tienda.carrito_index.actions') }}
                         </th>
                     </tr>
                 </thead>
@@ -161,7 +158,7 @@
                                         value="{{ $item['cantidad'] }}"
                                         min="1"
                                         max="{{ $productoActual?->stock ?? $item['stock'] }}"
-                                        aria-label="{{ $ingles ? 'Quantity' : 'Cantidad' }}"
+                                        aria-label="{{ __('tienda.carrito_index.quantity') }}"
                                         style="width:70px;"
                                         required
                                     >
@@ -170,7 +167,7 @@
                                         type="submit"
                                         class="boton boton-secundario"
                                     >
-                                        {{ $ingles ? 'Update' : 'Actualizar' }}
+                                        {{ __('tienda.carrito_index.update') }}
                                     </button>
 
                                 </form>
@@ -193,7 +190,7 @@
                                 <form
                                     action="{{ route('carrito.eliminar', $item['id']) }}"
                                     method="POST"
-                                    onsubmit="return confirm(@js($ingles ? 'Remove this product from your cart?' : '¿Eliminar este producto del carrito?'));"
+                                    onsubmit="return confirm(@js(__('tienda.carrito_index.remove_this_product_from_your_cart')));"
                                 >
 
                                     @csrf
@@ -203,7 +200,7 @@
                                         type="submit"
                                         class="boton boton-eliminar"
                                     >
-                                        {{ $ingles ? 'Remove' : 'Eliminar' }}
+                                        {{ __('tienda.carrito_index.remove') }}
                                     </button>
 
                                 </form>
@@ -236,7 +233,7 @@
             <div>
 
                 <h3 style="margin:0;">
-                    {{ $ingles ? 'Total' : 'Total' }}
+                    {{ __('tienda.carrito_index.total') }}
                 </h3>
 
                 <p
@@ -250,9 +247,7 @@
                 </p>
 
                 <small style="color:#6b7280;">
-                    {{ $ingles
-                        ? 'Final prices will be verified when confirming your order.'
-                        : 'Los precios finales se verificarán al confirmar el pedido.' }}
+                    {{ __('tienda.carrito_index.final_prices_will_be_verified_when') }}
                 </small>
 
             </div>
@@ -269,14 +264,14 @@
                     href="{{ route('productos.index') }}"
                     class="boton boton-secundario"
                 >
-                    {{ $ingles ? 'Continue Shopping' : 'Seguir comprando' }}
+                    {{ __('tienda.carrito_index.continue_shopping') }}
                 </a>
 
                 {{-- VACIAR CARRITO --}}
                 <form
                     action="{{ route('carrito.vaciar') }}"
                     method="POST"
-                    onsubmit="return confirm(@js($ingles ? 'Are you sure you want to empty your entire cart?' : '¿Seguro que deseas vaciar todo el carrito?'));"
+                    onsubmit="return confirm(@js(__('tienda.carrito_index.are_you_sure_you_want_to')));"
                 >
 
                     @csrf
@@ -286,7 +281,7 @@
                         type="submit"
                         class="boton boton-eliminar"
                     >
-                        {{ $ingles ? 'Empty Cart' : 'Vaciar carrito' }}
+                        {{ __('tienda.carrito_index.empty_cart') }}
                     </button>
 
                 </form>
@@ -303,7 +298,7 @@
                         display:inline-block;
                     "
                 >
-                    {{ $ingles ? 'Checkout' : 'Finalizar compra' }}
+                    {{ __('tienda.carrito_index.checkout') }}
                 </a>
 
             </div>

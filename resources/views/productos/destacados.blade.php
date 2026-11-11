@@ -1,15 +1,12 @@
 @extends('layouts.app')
 
-@php
-    $ingles = app()->getLocale() === 'en';
-@endphp
 
-@section('titulo', $ingles ? 'Featured Products' : 'Destacados')
+@section('titulo', __('tienda.productos_destacados.featured_products'))
 
 @section('contenido')
 
     <h2>
-        {{ $ingles ? 'Featured Products' : 'Productos destacados' }}
+        {{ __('tienda.productos_destacados.featured_products_2') }}
     </h2>
 
     <style>
@@ -77,7 +74,7 @@
     <section class="tarjeta destacado-seccion">
 
         <h3>
-            🔥 {{ $ingles ? 'Best Sellers' : 'Más vendidos' }}
+            🔥 {{ __('tienda.productos_destacados.best_sellers') }}
         </h3>
 
         <div class="destacados-grid">
@@ -109,15 +106,7 @@
 
                             {{-- Unidades vendidas --}}
                             <p class="destacado-estadistica">
-                                🔥 {{ $fila->unidades_vendidas }}
-
-                                {{ $ingles
-                                    ? ((int) $fila->unidades_vendidas === 1
-                                        ? 'unit sold'
-                                        : 'units sold')
-                                    : ((int) $fila->unidades_vendidas === 1
-                                        ? 'unidad vendida'
-                                        : 'unidades vendidas') }}
+                                🔥 {{ trans_choice('tienda.comun.unidades_vendidas', $fila->unidades_vendidas, ['cantidad' => $fila->unidades_vendidas]) }}
                             </p>
 
                             {{-- Ver detalle --}}
@@ -125,7 +114,7 @@
                                 href="{{ route('productos.show', $fila->producto) }}"
                                 class="boton"
                             >
-                                {{ $ingles ? 'View Product' : 'Ver producto' }}
+                                {{ __('tienda.productos_destacados.view_product') }}
                             </a>
 
                         </div>
@@ -137,9 +126,7 @@
             @empty
 
                 <p class="vacio">
-                    {{ $ingles
-                        ? 'There are no registered orders yet.'
-                        : 'Todavía no hay pedidos registrados.' }}
+                    {{ __('tienda.productos_destacados.there_are_no_registered_orders_yet') }}
                 </p>
 
             @endforelse
@@ -152,7 +139,7 @@
     <section class="tarjeta destacado-seccion">
 
         <h3>
-            ⭐ {{ $ingles ? 'Top Rated' : 'Mejor calificados' }}
+            ⭐ {{ __('tienda.productos_destacados.top_rated') }}
         </h3>
 
         <div class="destacados-grid">
@@ -193,7 +180,7 @@
                             href="{{ route('productos.show', $producto) }}"
                             class="boton"
                         >
-                            {{ $ingles ? 'View Product' : 'Ver producto' }}
+                            {{ __('tienda.productos_destacados.view_product') }}
                         </a>
 
                     </div>
@@ -203,9 +190,7 @@
             @empty
 
                 <p class="vacio">
-                    {{ $ingles
-                        ? 'There are no reviews yet.'
-                        : 'Todavía no hay reseñas registradas.' }}
+                    {{ __('tienda.productos_destacados.there_are_no_reviews_yet') }}
                 </p>
 
             @endforelse

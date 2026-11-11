@@ -1,5 +1,7 @@
 <?php
 
+// Autor: Equipo Muebles & Decoración (basado en el archivo de Laravel)
+
 return [
 
     /*
@@ -195,6 +197,23 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => 'name',
+        'email' => 'email',
+        'password' => 'password',
+        'cantidad' => 'quantity',
+        'nombre' => 'product name',
+        'descripcion' => 'description',
+        'imagen' => 'image URL',
+        'precio' => 'price',
+        'stock' => 'stock',
+        'categoria_id' => 'category',
+        'ambiente_id' => 'room',
+        'nombre_receptor' => 'recipient name',
+        'direccion_envio' => 'delivery address',
+        'ciudad_envio' => 'city',
+        'telefono_contacto' => 'contact phone',
+        'estado' => 'status',
+    ],
 
 ];

@@ -1,14 +1,11 @@
 @extends('layouts.app')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Order Details'
-    : 'Detalle del pedido'
+@section('titulo', __('tienda.pedidos_show.order_details')
 )
 
 @section('contenido')
 
 @php
-    $ingles = app()->getLocale() === 'en';
 
     $estados = [
         'pendiente' => [
@@ -92,12 +89,12 @@
 
     {{-- ENCABEZADO --}}
     <h1>
-        {{ $ingles ? 'Order Details' : 'Detalle del pedido' }}
+        {{ __('tienda.pedidos_show.order_details') }}
         #{{ $pedido->id }}
     </h1>
 
     <p>
-        {{ $ingles ? 'Order date:' : 'Fecha del pedido:' }}
+        {{ __('tienda.pedidos_show.order_date') }}
         {{ $pedido->fecha->format('d/m/Y') }}
     </p>
 
@@ -111,7 +108,7 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Shipping Status' : 'Estado del envío' }}
+            {{ __('tienda.pedidos_show.shipping_status') }}
         </h2>
 
         <p>
@@ -123,16 +120,14 @@
                 border-radius: 20px;
                 font-weight: bold;
             ">
-                {{ $estadoActual[$ingles ? 'en' : 'es'] }}
+                {{ $estadoActual[__('tienda.pedidos_show.en')] }}
             </span>
         </p>
 
         @if ($pedido->estado === 'cancelado')
 
             <p>
-                {{ $ingles
-                    ? 'This order has been cancelled.'
-                    : 'Este pedido ha sido cancelado.' }}
+                {{ __('tienda.pedidos_show.this_order_has_been_cancelled') }}
             </p>
 
         @else
@@ -152,10 +147,10 @@
                             && $indice <= $pasoActual;
 
                         $etiquetas = [
-                            'pendiente' => $ingles ? 'Received' : 'Recibido',
-                            'preparando' => $ingles ? 'Preparing' : 'Preparando',
-                            'enviado' => $ingles ? 'Shipped' : 'Enviado',
-                            'entregado' => $ingles ? 'Delivered' : 'Entregado',
+                            'pendiente' => __('tienda.pedidos_show.received'),
+                            'preparando' => __('tienda.pedidos_show.preparing'),
+                            'enviado' => __('tienda.pedidos_show.shipped'),
+                            'entregado' => __('tienda.pedidos_show.delivered'),
                         ];
                     @endphp
 
@@ -187,9 +182,7 @@
                 color: #6b7280;
                 margin-top: 1rem;
             ">
-                {{ $ingles
-                    ? 'Shipping progress is simulated and updated by the store administrator.'
-                    : 'El seguimiento del envío es simulado y lo actualiza el administrador de la tienda.' }}
+                {{ __('tienda.pedidos_show.shipping_progress_is_simulated_and_updated') }}
             </p>
 
         @endif
@@ -206,7 +199,7 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Purchased Products' : 'Productos comprados' }}
+            {{ __('tienda.pedidos_show.purchased_products') }}
         </h2>
 
         <div style="overflow-x: auto;">
@@ -217,19 +210,19 @@
                     <tr style="border-bottom: 2px solid #ddd;">
 
                         <th style="padding: 0.8rem; text-align: left;">
-                            {{ $ingles ? 'Product' : 'Producto' }}
+                            {{ __('tienda.pedidos_show.product') }}
                         </th>
 
                         <th style="padding: 0.8rem; text-align: center;">
-                            {{ $ingles ? 'Quantity' : 'Cantidad' }}
+                            {{ __('tienda.pedidos_show.quantity') }}
                         </th>
 
                         <th style="padding: 0.8rem; text-align: right;">
-                            {{ $ingles ? 'Unit Price' : 'Precio unitario' }}
+                            {{ __('tienda.pedidos_show.unit_price') }}
                         </th>
 
                         <th style="padding: 0.8rem; text-align: right;">
-                            {{ $ingles ? 'Subtotal' : 'Subtotal' }}
+                            {{ __('tienda.pedidos_show.subtotal') }}
                         </th>
 
                     </tr>
@@ -243,7 +236,7 @@
 
                             <td style="padding: 0.8rem;">
                                 {{ $detalle->producto?->nombre_localizado
-                                    ?? ($ingles ? 'Product unavailable' : 'Producto no disponible') }}
+                                    ?? (__('tienda.pedidos_show.product_unavailable')) }}
                             </td>
 
                             <td style="padding: 0.8rem; text-align: center;">
@@ -274,7 +267,7 @@
             font-weight: bold;
             margin-top: 1.5rem;
         ">
-            {{ $ingles ? 'Total:' : 'Total:' }}
+            {{ __('tienda.pedidos_show.total') }}
             ${{ number_format((float) $pedido->total, 0, ',', '.') }} COP
         </div>
 
@@ -290,26 +283,26 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Delivery Information' : 'Información de entrega' }}
+            {{ __('tienda.pedidos_show.delivery_information') }}
         </h2>
 
         <p>
-            <strong>{{ $ingles ? 'Recipient:' : 'Destinatario:' }}</strong>
+            <strong>{{ __('tienda.pedidos_show.recipient') }}</strong>
             {{ $pedido->nombre_receptor }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'Address:' : 'Dirección:' }}</strong>
+            <strong>{{ __('tienda.pedidos_show.address') }}</strong>
             {{ $pedido->direccion_envio }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'City:' : 'Ciudad:' }}</strong>
+            <strong>{{ __('tienda.pedidos_show.city') }}</strong>
             {{ $pedido->ciudad_envio }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'Phone:' : 'Teléfono:' }}</strong>
+            <strong>{{ __('tienda.pedidos_show.phone') }}</strong>
             {{ $pedido->telefono_contacto }}
         </p>
 
@@ -334,7 +327,7 @@
                 text-decoration: none;
             "
         >
-            {{ $ingles ? 'My Orders' : 'Mis pedidos' }}
+            {{ __('tienda.pedidos_show.my_orders') }}
         </a>
 
         <a
@@ -348,7 +341,7 @@
                 text-decoration: none;
             "
         >
-            {{ $ingles ? 'Continue Shopping' : 'Seguir comprando' }}
+            {{ __('tienda.pedidos_show.continue_shopping') }}
         </a>
 
     </div>

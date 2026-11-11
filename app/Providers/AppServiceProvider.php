@@ -2,13 +2,12 @@
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-
 use App\Contracts\ReporteProductoInterface;
-use App\Services\ReporteProductosCsv;
-
 use App\Models\Producto;
 use App\Observers\ProductoObserver;
+use App\Services\ReporteProductosCsv;
+use App\Services\ReporteProductosJson;
+use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -17,12 +16,14 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Mantener la inyección de dependencias
-        // para la generación de reportes.
-        $this->app->bind(
-            ReporteProductoInterface::class,
-            ReporteProductosCsv::class
-        );
+        // Inversión de dependencias para los reportes:
+        // el controlador solo conoce la interfaz y aquí se decide
+        // qué clase concreta usar según el formato pedido (?formato=json|csv).
+        $this->app->bind(ReporteProductoInterface::class, function ($app) {
+            return $app['request']->query('formato') === 'json'
+                ? $app->make(ReporteProductosJson::class)
+                : $app->make(ReporteProductosCsv::class);
+        });
     }
 
     /**

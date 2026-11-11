@@ -31,8 +31,6 @@ class CarritoController extends Controller
         Producto $producto
     ): RedirectResponse {
 
-        $ingles = app()->getLocale() === 'en';
-
         // Validar cantidad
         $request->validate([
             'cantidad' => [
@@ -59,9 +57,7 @@ class CarritoController extends Controller
             if ($nuevaCantidad > $producto->stock) {
                 return back()->with(
                     'error',
-                    $ingles
-                        ? 'Not enough stock available.'
-                        : 'No hay suficiente stock disponible.'
+                    __('tienda.ctrl_carrito.not_enough_stock_available')
                 );
             }
 
@@ -87,9 +83,7 @@ class CarritoController extends Controller
             ->route('carrito.index')
             ->with(
                 'exito',
-                $ingles
-                    ? 'Product added to cart successfully.'
-                    : 'Producto agregado al carrito.'
+                __('tienda.ctrl_carrito.product_added_to_cart_successfully')
             );
     }
 
@@ -100,8 +94,6 @@ class CarritoController extends Controller
         Request $request,
         Producto $producto
     ): RedirectResponse {
-
-        $ingles = app()->getLocale() === 'en';
 
         $request->validate([
             'cantidad' => [
@@ -126,9 +118,7 @@ class CarritoController extends Controller
             ->route('carrito.index')
             ->with(
                 'exito',
-                $ingles
-                    ? 'Quantity updated successfully.'
-                    : 'Cantidad actualizada.'
+                __('tienda.ctrl_carrito.quantity_updated_successfully')
             );
     }
 
@@ -137,8 +127,6 @@ class CarritoController extends Controller
      */
     public function eliminar(Producto $producto): RedirectResponse
     {
-        $ingles = app()->getLocale() === 'en';
-
         $carrito = session()->get('carrito', []);
 
         if (isset($carrito[$producto->id])) {
@@ -152,9 +140,7 @@ class CarritoController extends Controller
             ->route('carrito.index')
             ->with(
                 'exito',
-                $ingles
-                    ? 'Product removed from cart.'
-                    : 'Producto eliminado del carrito.'
+                __('tienda.ctrl_carrito.product_removed_from_cart')
             );
     }
 
@@ -163,17 +149,13 @@ class CarritoController extends Controller
      */
     public function vaciar(): RedirectResponse
     {
-        $ingles = app()->getLocale() === 'en';
-
         session()->forget('carrito');
 
         return redirect()
             ->route('carrito.index')
             ->with(
                 'exito',
-                $ingles
-                    ? 'Shopping cart emptied successfully.'
-                    : 'Carrito vaciado correctamente.'
+                __('tienda.ctrl_carrito.shopping_cart_emptied_successfully')
             );
     }
 }

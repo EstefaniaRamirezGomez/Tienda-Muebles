@@ -6,12 +6,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    @php
-        $ingles = app()->getLocale() === 'en';
-    @endphp
 
     <title>
-        @yield('titulo', $ingles ? 'Administration Panel' : 'Panel de administración')
+        @yield('titulo', __('tienda.layouts_admin.administration_panel'))
         · Muebles & Decoración
     </title>
 
@@ -402,7 +399,7 @@
     <aside>
 
         <h1>
-            🪑 {{ $ingles ? 'Administration Panel' : 'Panel de administración' }}
+            🪑 {{ __('tienda.layouts_admin.administration_panel') }}
         </h1>
 
         {{-- INICIO --}}
@@ -410,7 +407,7 @@
             href="{{ route('admin.inicio') }}"
             class="{{ request()->routeIs('admin.inicio') ? 'activo' : '' }}"
         >
-            {{ $ingles ? 'Dashboard' : 'Inicio' }}
+            {{ __('tienda.layouts_admin.dashboard') }}
         </a>
 
         {{-- PRODUCTOS --}}
@@ -418,7 +415,7 @@
             href="{{ route('admin.productos.index') }}"
             class="{{ request()->routeIs('admin.productos.*') ? 'activo' : '' }}"
         >
-            {{ $ingles ? 'Products' : 'Productos' }}
+            {{ __('tienda.layouts_admin.products') }}
         </a>
 
         {{-- PEDIDOS --}}
@@ -426,12 +423,12 @@
             href="{{ route('admin.pedidos.index') }}"
             class="{{ request()->routeIs('admin.pedidos.*') ? 'activo' : '' }}"
         >
-            {{ $ingles ? 'Orders' : 'Gestionar pedidos' }}
+            {{ __('tienda.layouts_admin.orders') }}
         </a>
 
         {{-- VER TIENDA --}}
         <a href="{{ route('inicio') }}">
-            {{ $ingles ? 'View Store' : 'Ver tienda' }}
+            {{ __('tienda.layouts_admin.view_store') }}
         </a>
 
     </aside>
@@ -445,27 +442,27 @@
             {{-- SELECTOR DE IDIOMA --}}
             <div
                 class="selector-idioma"
-                aria-label="{{ $ingles ? 'Language selector' : 'Selector de idioma' }}"
+                aria-label="{{ __('tienda.layouts_admin.language_selector') }}"
             >
 
                 <span>
-                    {{ $ingles ? 'Language:' : 'Idioma:' }}
+                    {{ __('tienda.layouts_admin.language') }}
                 </span>
 
                 <a
                     href="{{ route('idioma.cambiar', 'es') }}"
-                    class="{{ !$ingles ? 'activo' : '' }}"
+                    class="{{ !__('tienda.layouts_admin.activo') }}"
                     lang="es"
-                    aria-current="{{ !$ingles ? 'true' : 'false' }}"
+                    aria-current="{{ !__('tienda.layouts_admin.true') }}"
                 >
                     🇨🇴 Español
                 </a>
 
                 <a
                     href="{{ route('idioma.cambiar', 'en') }}"
-                    class="{{ $ingles ? 'activo' : '' }}"
+                    class="{{ __('tienda.layouts_admin.activo') }}"
                     lang="en"
-                    aria-current="{{ $ingles ? 'true' : 'false' }}"
+                    aria-current="{{ __('tienda.layouts_admin.true') }}"
                 >
                     🇺🇸 English
                 </a>
@@ -480,7 +477,7 @@
                 @csrf
 
                 <button type="submit">
-                    {{ $ingles ? 'Log Out' : 'Cerrar sesión' }}
+                    {{ __('tienda.layouts_admin.log_out') }}
                 </button>
 
             </form>

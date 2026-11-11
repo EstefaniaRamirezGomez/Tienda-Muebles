@@ -1,66 +1,12 @@
 @extends('layouts.app')
 
 @php
-    $ingles = app()->getLocale() === 'en';
-
-    // Traducciones de categorías
-    $traduccionesCategorias = [
-        'sofás' => 'Sofas',
-        'sofá' => 'Sofa',
-        'mesas' => 'Tables',
-        'mesa' => 'Table',
-        'sillas' => 'Chairs',
-        'silla' => 'Chair',
-        'lámparas' => 'Lamps',
-        'lámpara' => 'Lamp',
-        'camas' => 'Beds',
-        'cama' => 'Bed',
-        'escritorios' => 'Desks',
-        'escritorio' => 'Desk',
-        'decoración' => 'Decoration',
-        'muebles' => 'Furniture',
-        'accesorios' => 'Accessories',
-    ];
-
-    // Traducciones de ambientes
-    $traduccionesAmbientes = [
-        'cocina' => 'Kitchen',
-        'dormitorio' => 'Bedroom',
-        'exterior' => 'Outdoor',
-        'oficina' => 'Office',
-        'sala' => 'Living Room',
-        'comedor' => 'Dining Room',
-        'baño' => 'Bathroom',
-        'terraza' => 'Terrace',
-        'jardín' => 'Garden',
-        'estudio' => 'Study',
-    ];
-
     // Nombre y descripción traducidos desde el modelo
     $nombreProducto = $producto->nombre_localizado;
     $descripcionProducto = $producto->descripcion_localizada;
 
-    // Categoría
-    $categoriaOriginal = $producto->categoria?->nombre;
-
-    $claveCategoria = mb_strtolower(
-        trim($categoriaOriginal ?? '')
-    );
-
-    $nombreCategoria = $ingles
-        ? ($traduccionesCategorias[$claveCategoria] ?? $categoriaOriginal)
-        : $categoriaOriginal;
-
-    // Ambiente
-    $ambienteOriginal = $producto->ambiente?->nombre;
-
-    $claveAmbiente = mb_strtolower(
-        trim($ambienteOriginal ?? '')
-    );
-
-    $nombreAmbiente = $ingles
-        ? ($traduccionesAmbientes[$claveAmbiente] ?? $ambienteOriginal)
-        : $ambienteOriginal;
+    $nombreCategoria = $producto->categoria?->nombre_localizado;
+    $nombreAmbiente = $producto->ambiente?->nombre_localizado;
 @endphp
 
 @section('titulo', $nombreProducto)
@@ -70,7 +16,7 @@
     {{-- Volver al catálogo --}}
     <a href="{{ route('productos.index') }}">
         &larr;
-        {{ $ingles ? 'Back to Catalog' : 'Volver al catálogo' }}
+        {{ __('tienda.productos_show.back_to_catalog') }}
     </a>
 
     {{-- Mensajes del sistema --}}
@@ -92,11 +38,11 @@
         <div style="margin-bottom:1rem;">
 
             <span class="etiqueta">
-                {{ $nombreCategoria ?: ($ingles ? 'Uncategorized' : 'Sin categoría') }}
+                {{ $nombreCategoria ?: (__('tienda.productos_show.uncategorized')) }}
             </span>
 
             <span class="etiqueta">
-                {{ $nombreAmbiente ?: ($ingles ? 'No room assigned' : 'Sin ambiente') }}
+                {{ $nombreAmbiente ?: (__('tienda.productos_show.no_room_assigned')) }}
             </span>
 
         </div>
@@ -133,7 +79,7 @@
 
         <p>
             <strong>
-                {{ $ingles ? 'Available Stock:' : 'Stock disponible:' }}
+                {{ __('tienda.productos_show.available_stock') }}
             </strong>
 
             {{ $producto->stock }}
@@ -141,7 +87,7 @@
 
         <p>
             <strong>
-                {{ $ingles ? 'Average Rating:' : 'Calificación promedio:' }}
+                {{ __('tienda.productos_show.average_rating') }}
             </strong>
 
             <span class="estrella">
@@ -169,7 +115,7 @@
                     @csrf
 
                     <label for="cantidad">
-                        {{ $ingles ? 'Quantity:' : 'Cantidad:' }}
+                        {{ __('tienda.productos_show.quantity') }}
                     </label>
 
                     <input
@@ -189,7 +135,7 @@
                     >
 
                     <button type="submit" class="boton">
-                        {{ $ingles ? 'Add to Cart' : 'Agregar al carrito' }}
+                        {{ __('tienda.productos_show.add_to_cart') }}
                     </button>
 
                 </form>
@@ -197,9 +143,7 @@
             @else
 
                 <p class="vacio">
-                    {{ $ingles
-                        ? 'This product is out of stock.'
-                        : 'Este producto está agotado.' }}
+                    {{ __('tienda.productos_show.this_product_is_out_of_stock') }}
                 </p>
 
             @endif
@@ -212,9 +156,7 @@
                     href="{{ route('login') }}"
                     class="boton"
                 >
-                    {{ $ingles
-                        ? 'Log in to add to cart'
-                        : 'Inicia sesión para agregar al carrito' }}
+                    {{ __('tienda.productos_show.log_in_to_add_to_cart') }}
                 </a>
 
             </div>
@@ -225,36 +167,34 @@
         @if ($producto->especificacion)
 
             <h3>
-                {{ $ingles ? 'Technical Specifications' : 'Ficha técnica' }}
+                {{ __('tienda.productos_show.technical_specifications') }}
             </h3>
 
             <table>
 
                 <tr>
                     <th>
-                        {{ $ingles ? 'Material' : 'Material' }}
+                        {{ __('tienda.productos_show.material') }}
                     </th>
 
                     <td>
-                        {{ $producto->especificacion->material }}
+                        {{ $producto->especificacion->material_localizado }}
                     </td>
                 </tr>
 
                 <tr>
                     <th>
-                        {{ $ingles ? 'Color' : 'Color' }}
+                        {{ __('tienda.productos_show.color') }}
                     </th>
 
                     <td>
-                        {{ $producto->especificacion->color }}
+                        {{ $producto->especificacion->color_localizado }}
                     </td>
                 </tr>
 
                 <tr>
                     <th>
-                        {{ $ingles
-                            ? 'Dimensions (W x H x D)'
-                            : 'Dimensiones (A x Al x P)' }}
+                        {{ __('tienda.productos_show.dimensions_w_x_h_x_d') }}
                     </th>
 
                     <td>
@@ -269,7 +209,7 @@
 
                 <tr>
                     <th>
-                        {{ $ingles ? 'Weight' : 'Peso' }}
+                        {{ __('tienda.productos_show.weight') }}
                     </th>
 
                     <td>
@@ -279,29 +219,21 @@
 
                 <tr>
                     <th>
-                        {{ $ingles
-                            ? 'Assembly Required'
-                            : 'Requiere ensamblaje' }}
+                        {{ __('tienda.productos_show.assembly_required') }}
                     </th>
 
                     <td>
-                        {{ $ingles
-                            ? ($producto->especificacion->requiere_ensamblaje ? 'Yes' : 'No')
-                            : ($producto->especificacion->requiere_ensamblaje ? 'Sí' : 'No') }}
+                        {{ $producto->especificacion->requiere_ensamblaje ? __('tienda.comun.si') : __('tienda.comun.no') }}
                     </td>
                 </tr>
 
                 <tr>
                     <th>
-                        {{ $ingles ? 'Warranty' : 'Garantía' }}
+                        {{ __('tienda.productos_show.warranty') }}
                     </th>
 
                     <td>
-                        {{ $producto->especificacion->garantia_meses }}
-
-                        {{ $ingles
-                            ? ($producto->especificacion->garantia_meses == 1 ? 'month' : 'months')
-                            : ($producto->especificacion->garantia_meses == 1 ? 'mes' : 'meses') }}
+                        {{ trans_choice('tienda.comun.meses', $producto->especificacion->garantia_meses, ['cantidad' => $producto->especificacion->garantia_meses]) }}
                     </td>
                 </tr>
 
@@ -312,16 +244,14 @@
                 style="margin-top:0.8rem;"
                 href="{{ route('productos.index') }}"
             >
-                {{ $ingles
-                    ? 'Compare with Other Products'
-                    : 'Comparar con otros productos' }}
+                {{ __('tienda.productos_show.compare_with_other_products') }}
             </a>
 
         @endif
 
         {{-- Reseñas --}}
         <h3 style="margin-top:2rem;">
-            {{ $ingles ? 'Customer Reviews' : 'Reseñas de clientes' }}
+            {{ __('tienda.productos_show.customer_reviews') }}
         </h3>
 
         @forelse ($producto->resenas as $resena)
@@ -338,7 +268,7 @@
 
                 <strong>
                     {{ $resena->usuario?->name
-                        ?? ($ingles ? 'User unavailable' : 'Usuario no disponible') }}
+                        ?? (__('tienda.productos_show.user_unavailable')) }}
                 </strong>
 
                 <span class="estrella" style="margin-left:0.5rem;">
@@ -354,9 +284,7 @@
         @empty
 
             <p class="vacio">
-                {{ $ingles
-                    ? 'This product has no reviews yet.'
-                    : 'Este producto todavía no tiene reseñas.' }}
+                {{ __('tienda.productos_show.this_product_has_no_reviews_yet') }}
             </p>
 
         @endforelse

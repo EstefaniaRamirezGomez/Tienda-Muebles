@@ -1,14 +1,11 @@
 @extends('layouts.admin')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Order Details'
-    : 'Detalle del pedido'
+@section('titulo', __('tienda.admin_pedidos_show.order_details')
 )
 
 @section('contenido')
 
 @php
-    $ingles = app()->getLocale() === 'en';
 
     $estados = [
         'pendiente' => [
@@ -87,7 +84,7 @@
             text-decoration: none;
         "
     >
-        {{ $ingles ? '← Back to Orders' : '← Volver a pedidos' }}
+        {{ __('tienda.admin_pedidos_show.back_to_orders') }}
     </a>
 
     {{-- ENCABEZADO --}}
@@ -102,12 +99,12 @@
 
         <div>
             <h1 style="margin-bottom: 0.5rem;">
-                {{ $ingles ? 'Order' : 'Pedido' }}
+                {{ __('tienda.admin_pedidos_show.order') }}
                 #{{ $pedido->id }}
             </h1>
 
             <p style="color: #6b7280;">
-                {{ $ingles ? 'Order date:' : 'Fecha del pedido:' }}
+                {{ __('tienda.admin_pedidos_show.order_date') }}
                 {{ $pedido->fecha?->format('d/m/Y') ?? '-' }}
             </p>
         </div>
@@ -120,7 +117,7 @@
             border-radius: 20px;
             font-weight: bold;
         ">
-            {{ $estado[$ingles ? 'en' : 'es'] }}
+            {{ $estado[__('tienda.admin_pedidos_show.en')] }}
         </span>
 
     </div>
@@ -176,16 +173,16 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Customer Information' : 'Información del cliente' }}
+            {{ __('tienda.admin_pedidos_show.customer_information') }}
         </h2>
 
         <p>
-            <strong>{{ $ingles ? 'Name:' : 'Nombre:' }}</strong>
+            <strong>{{ __('tienda.admin_pedidos_show.name') }}</strong>
             {{ $pedido->usuario?->name ?? '-' }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'Email:' : 'Correo electrónico:' }}</strong>
+            <strong>{{ __('tienda.admin_pedidos_show.email') }}</strong>
             {{ $pedido->usuario?->email ?? '-' }}
         </p>
 
@@ -201,26 +198,26 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Delivery Information' : 'Información de entrega' }}
+            {{ __('tienda.admin_pedidos_show.delivery_information') }}
         </h2>
 
         <p>
-            <strong>{{ $ingles ? 'Recipient:' : 'Destinatario:' }}</strong>
+            <strong>{{ __('tienda.admin_pedidos_show.recipient') }}</strong>
             {{ $pedido->nombre_receptor ?? '-' }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'Address:' : 'Dirección:' }}</strong>
+            <strong>{{ __('tienda.admin_pedidos_show.address') }}</strong>
             {{ $pedido->direccion_envio ?? '-' }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'City:' : 'Ciudad:' }}</strong>
+            <strong>{{ __('tienda.admin_pedidos_show.city') }}</strong>
             {{ $pedido->ciudad_envio ?? '-' }}
         </p>
 
         <p>
-            <strong>{{ $ingles ? 'Contact Phone:' : 'Teléfono de contacto:' }}</strong>
+            <strong>{{ __('tienda.admin_pedidos_show.contact_phone') }}</strong>
             {{ $pedido->telefono_contacto ?? '-' }}
         </p>
 
@@ -237,7 +234,7 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Purchased Products' : 'Productos comprados' }}
+            {{ __('tienda.admin_pedidos_show.purchased_products') }}
         </h2>
 
         <table style="
@@ -250,19 +247,19 @@
                 <tr style="border-bottom: 2px solid #e5e7eb;">
 
                     <th style="padding: 0.8rem; text-align: left;">
-                        {{ $ingles ? 'Product' : 'Producto' }}
+                        {{ __('tienda.admin_pedidos_show.product') }}
                     </th>
 
                     <th style="padding: 0.8rem; text-align: center;">
-                        {{ $ingles ? 'Quantity' : 'Cantidad' }}
+                        {{ __('tienda.admin_pedidos_show.quantity') }}
                     </th>
 
                     <th style="padding: 0.8rem; text-align: right;">
-                        {{ $ingles ? 'Unit Price' : 'Precio unitario' }}
+                        {{ __('tienda.admin_pedidos_show.unit_price') }}
                     </th>
 
                     <th style="padding: 0.8rem; text-align: right;">
-                        {{ $ingles ? 'Subtotal' : 'Subtotal' }}
+                        {{ __('tienda.admin_pedidos_show.subtotal') }}
                     </th>
 
                 </tr>
@@ -276,7 +273,7 @@
 
                         <td style="padding: 0.8rem;">
                             {{ $detalle->producto?->nombre_localizado
-                                ?? ($ingles ? 'Unavailable product' : 'Producto no disponible') }}
+                                ?? (__('tienda.admin_pedidos_show.unavailable_product')) }}
                         </td>
 
                         <td style="padding: 0.8rem; text-align: center;">
@@ -301,9 +298,7 @@
                             text-align: center;
                             color: #6b7280;
                         ">
-                            {{ $ingles
-                                ? 'No products found for this order.'
-                                : 'No se encontraron productos para este pedido.' }}
+                            {{ __('tienda.admin_pedidos_show.no_products_found_for_this_order') }}
                         </td>
                     </tr>
 
@@ -319,7 +314,7 @@
             font-weight: bold;
             margin-top: 1.5rem;
         ">
-            {{ $ingles ? 'Order Total:' : 'Total del pedido:' }}
+            {{ __('tienda.admin_pedidos_show.order_total') }}
             ${{ number_format((float) $pedido->total, 0, ',', '.') }} COP
         </div>
 
@@ -335,24 +330,22 @@
     ">
 
         <h2>
-            {{ $ingles ? 'Delivery Management' : 'Gestión de entrega' }}
+            {{ __('tienda.admin_pedidos_show.delivery_management') }}
         </h2>
 
         <p style="color: #6b7280;">
-            {{ $ingles
-                ? 'Order statuses must advance in sequence.'
-                : 'Los estados del pedido deben avanzar en orden.' }}
+            {{ __('tienda.admin_pedidos_show.order_statuses_must_advance_in_sequence') }}
         </p>
 
         @if ($siguienteEstado !== null)
 
             @php
-                $siguienteEtiqueta = $estados[$siguienteEstado][$ingles ? 'en' : 'es'];
+                $siguienteEtiqueta = $estados[$siguienteEstado][__('tienda.admin_pedidos_show.en')];
             @endphp
 
             <p>
                 <strong>
-                    {{ $ingles ? 'Next status:' : 'Siguiente estado:' }}
+                    {{ __('tienda.admin_pedidos_show.next_status') }}
                 </strong>
 
                 {{ $siguienteEtiqueta }}
@@ -361,7 +354,7 @@
             <form
                 action="{{ route('admin.pedidos.estado', $pedido) }}"
                 method="POST"
-                onsubmit="return confirm(@js($ingles ? 'Are you sure you want to update this order status?' : '¿Seguro que deseas actualizar el estado de este pedido?'));"
+                onsubmit="return confirm(@js(__('tienda.admin_pedidos_show.are_you_sure_you_want_to')));"
             >
 
                 @csrf
@@ -386,7 +379,7 @@
                         cursor: pointer;
                     "
                 >
-                    {{ $ingles ? 'Advance to' : 'Avanzar a' }}
+                    {{ __('tienda.admin_pedidos_show.advance_to') }}
                     {{ $siguienteEtiqueta }}
                 </button>
 
@@ -400,9 +393,7 @@
                 padding: 1rem;
                 border-radius: 8px;
             ">
-                {{ $ingles
-                    ? 'This order has been delivered successfully. No further status changes are available.'
-                    : 'Este pedido fue entregado correctamente. No hay más cambios de estado disponibles.' }}
+                {{ __('tienda.admin_pedidos_show.this_order_has_been_delivered_successfully') }}
             </div>
 
         @elseif ($pedido->estado === 'cancelado')
@@ -413,17 +404,13 @@
                 padding: 1rem;
                 border-radius: 8px;
             ">
-                {{ $ingles
-                    ? 'This order has been cancelled and cannot be modified.'
-                    : 'Este pedido fue cancelado y no puede modificarse.' }}
+                {{ __('tienda.admin_pedidos_show.this_order_has_been_cancelled_and') }}
             </div>
 
         @else
 
             <p style="color: #991b1b;">
-                {{ $ingles
-                    ? 'The current order status is not recognized.'
-                    : 'El estado actual del pedido no es reconocido.' }}
+                {{ __('tienda.admin_pedidos_show.the_current_order_status_is_not') }}
             </p>
 
         @endif
@@ -440,13 +427,11 @@
     ">
 
         <strong>
-            {{ $ingles ? 'Demonstration Mode' : 'Modo demostración' }}
+            {{ __('tienda.admin_pedidos_show.demonstration_mode') }}
         </strong>
 
         <p style="margin-bottom: 0;">
-            {{ $ingles
-                ? 'Shipping statuses are simulated. Updating an order does not contact a real delivery company.'
-                : 'Los estados de envío son simulados. Actualizar un pedido no contacta a ninguna empresa transportadora real.' }}
+            {{ __('tienda.admin_pedidos_show.shipping_statuses_are_simulated_updating_an') }}
         </p>
 
     </div>

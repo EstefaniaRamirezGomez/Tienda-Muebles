@@ -33,10 +33,7 @@ class PedidoController extends Controller
                 ->route('carrito.index')
                 ->with(
                     'error',
-                    $this->mensaje(
-                        'Tu carrito está vacío.',
-                        'Your cart is empty.'
-                    )
+                    __('tienda.ctrl_pedido.your_cart_is_empty')
                 );
         }
 
@@ -81,10 +78,7 @@ class PedidoController extends Controller
                 ->route('carrito.index')
                 ->with(
                     'error',
-                    $this->mensaje(
-                        'No hay productos válidos para comprar.',
-                        'There are no valid products to purchase.'
-                    )
+                    __('tienda.ctrl_pedido.there_are_no_valid_products_to')
                 );
         }
 
@@ -94,41 +88,13 @@ class PedidoController extends Controller
     // Confirmar compra simulada
     public function store(Request $request): RedirectResponse
     {
-        $ingles = app()->getLocale() === 'en';
-
         $datos = $request->validate(
             [
                 'nombre_receptor' => 'required|string|max:150',
                 'direccion_envio' => 'required|string|max:255',
                 'ciudad_envio' => 'required|string|max:100',
                 'telefono_contacto' => 'required|string|max:30',
-            ],
-            [
-                'required' => $ingles
-                    ? 'The :attribute field is required.'
-                    : 'El campo :attribute es obligatorio.',
-
-                'string' => $ingles
-                    ? 'The :attribute must be text.'
-                    : 'El campo :attribute debe ser un texto.',
-
-                'max.string' => $ingles
-                    ? 'The :attribute may not exceed :max characters.'
-                    : 'El campo :attribute no puede superar los :max caracteres.',
-            ],
-            $ingles
-                ? [
-                    'nombre_receptor' => 'recipient name',
-                    'direccion_envio' => 'delivery address',
-                    'ciudad_envio' => 'city',
-                    'telefono_contacto' => 'contact phone',
-                ]
-                : [
-                    'nombre_receptor' => 'nombre del destinatario',
-                    'direccion_envio' => 'dirección de entrega',
-                    'ciudad_envio' => 'ciudad',
-                    'telefono_contacto' => 'teléfono de contacto',
-                ]
+            ]
         );
 
         $carrito = $request->session()->get('carrito', []);
@@ -138,10 +104,7 @@ class PedidoController extends Controller
                 ->route('carrito.index')
                 ->with(
                     'error',
-                    $this->mensaje(
-                        'Tu carrito está vacío.',
-                        'Your cart is empty.'
-                    )
+                    __('tienda.ctrl_pedido.your_cart_is_empty')
                 );
         }
 
@@ -168,10 +131,7 @@ class PedidoController extends Controller
 
                 if (!$producto) {
                     throw ValidationException::withMessages([
-                        'carrito' => $this->mensaje(
-                            'Uno de los productos ya no está disponible.',
-                            'One of the products is no longer available.'
-                        ),
+                        'carrito' => __('tienda.ctrl_pedido.one_of_the_products_is_no'),
                     ]);
                 }
 
@@ -179,19 +139,13 @@ class PedidoController extends Controller
 
                 if ($cantidad <= 0) {
                     throw ValidationException::withMessages([
-                        'carrito' => $this->mensaje(
-                            'Hay una cantidad inválida en el carrito.',
-                            'There is an invalid quantity in the cart.'
-                        ),
+                        'carrito' => __('tienda.ctrl_pedido.there_is_an_invalid_quantity_in'),
                     ]);
                 }
 
                 if ($producto->stock < $cantidad) {
                     throw ValidationException::withMessages([
-                        'carrito' => $this->mensaje(
-                            'No hay suficiente stock para: ' . $producto->nombre,
-                            'Not enough stock for: ' . $producto->nombre_localizado
-                        ),
+                        'carrito' => __('tienda.ctrl_pedido.not_enough_stock_for', ['producto' => $producto->nombre_localizado]),
                     ]);
                 }
 
@@ -212,10 +166,7 @@ class PedidoController extends Controller
 
             if (empty($lineas)) {
                 throw ValidationException::withMessages([
-                    'carrito' => $this->mensaje(
-                        'No hay productos para confirmar.',
-                        'There are no products to confirm.'
-                    ),
+                    'carrito' => __('tienda.ctrl_pedido.there_are_no_products_to_confirm'),
                 ]);
             }
 
@@ -256,10 +207,7 @@ class PedidoController extends Controller
             ->route('pedidos.show', $pedido)
             ->with(
                 'exito',
-                $this->mensaje(
-                    '¡Pedido confirmado correctamente! Esta es una compra simulada.',
-                    'Order confirmed successfully! This is a simulated purchase.'
-                )
+                __('tienda.ctrl_pedido.order_confirmed_successfully_this_is_a')
             );
     }
 
@@ -277,13 +225,4 @@ class PedidoController extends Controller
         return view('pedidos.show', compact('pedido'));
     }
 
-    // Seleccionar mensaje según el idioma
-    private function mensaje(
-        string $espanol,
-        string $ingles
-    ): string {
-        return app()->getLocale() === 'en'
-            ? $ingles
-            : $espanol;
-    }
 }

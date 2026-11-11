@@ -2,11 +2,14 @@
 
 namespace App\Models;
 
+use App\Models\Concerns\TraduceValores;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class EspecificacionMueble extends Model
 {
+    use TraduceValores;
+
     protected $table = 'especificaciones_muebles';
 
     protected $fillable = [
@@ -34,5 +37,21 @@ class EspecificacionMueble extends Model
     public function tiempoEnsamblajeEstimado(): int
     {
         return $this->requiere_ensamblaje ? 30 : 0;
+    }
+
+    /**
+     * Material en el idioma actual.
+     */
+    public function getMaterialLocalizadoAttribute(): ?string
+    {
+        return $this->traducirValor($this->material, 'values');
+    }
+
+    /**
+     * Color en el idioma actual.
+     */
+    public function getColorLocalizadoAttribute(): ?string
+    {
+        return $this->traducirValor($this->color, 'values');
     }
 }

@@ -21,11 +21,11 @@ class ReporteProductosCsv implements ReporteProductoInterface
         try {
             // Encabezados del archivo CSV.
             fputcsv($archivo, [
-                'ID',
-                'Nombre',
-                'Precio',
-                'Stock',
-                'Categoria',
+                __('tienda.reporte.id'),
+                __('tienda.reporte.nombre'),
+                __('tienda.reporte.precio'),
+                __('tienda.reporte.stock'),
+                __('tienda.reporte.categoria'),
             ]);
 
             foreach ($productos as $producto) {

@@ -48,72 +48,10 @@ class ProductoController extends Controller
         ];
     }
 
-    // Nombres de los campos según el idioma
-    private function atributosValidacion(): array
-    {
-        $ingles = app()->getLocale() === 'en';
-
-        return $ingles
-            ? [
-                'nombre' => 'product name',
-                'descripcion' => 'description',
-                'imagen' => 'image URL',
-                'precio' => 'price',
-                'stock' => 'stock',
-                'categoria_id' => 'category',
-                'ambiente_id' => 'room',
-            ]
-            : [
-                'nombre' => 'nombre del producto',
-                'descripcion' => 'descripción',
-                'imagen' => 'URL de la imagen',
-                'precio' => 'precio',
-                'stock' => 'stock',
-                'categoria_id' => 'categoría',
-                'ambiente_id' => 'ambiente',
-            ];
-    }
-
-    // Mensajes personalizados de validación
-    private function mensajesValidacion(): array
-    {
-        $ingles = app()->getLocale() === 'en';
-
-        if ($ingles) {
-            return [
-                'required' => 'The :attribute field is required.',
-                'string' => 'The :attribute must be a text value.',
-                'numeric' => 'The :attribute must be a number.',
-                'integer' => 'The :attribute must be an integer.',
-                'url' => 'The :attribute must be a valid URL.',
-                'min.numeric' => 'The :attribute must be at least :min.',
-                'min.integer' => 'The :attribute must be at least :min.',
-                'max.string' => 'The :attribute may not exceed :max characters.',
-                'exists' => 'The selected :attribute is invalid.',
-            ];
-        }
-
-        return [
-            'required' => 'El campo :attribute es obligatorio.',
-            'string' => 'El campo :attribute debe ser un texto.',
-            'numeric' => 'El campo :attribute debe ser un número.',
-            'integer' => 'El campo :attribute debe ser un número entero.',
-            'url' => 'El campo :attribute debe contener una URL válida.',
-            'min.numeric' => 'El campo :attribute debe ser como mínimo :min.',
-            'min.integer' => 'El campo :attribute debe ser como mínimo :min.',
-            'max.string' => 'El campo :attribute no puede superar los :max caracteres.',
-            'exists' => 'El valor seleccionado para :attribute no es válido.',
-        ];
-    }
-
     // Guardar producto nuevo
     public function store(Request $request): RedirectResponse
     {
-        $datos = $request->validate(
-            $this->reglasValidacion(),
-            $this->mensajesValidacion(),
-            $this->atributosValidacion()
-        );
+        $datos = $request->validate($this->reglasValidacion());
 
         Producto::create($datos);
 
@@ -121,9 +59,7 @@ class ProductoController extends Controller
             ->route('admin.productos.index')
             ->with(
                 'exito',
-                app()->getLocale() === 'en'
-                    ? 'Product created successfully.'
-                    : 'Producto creado correctamente.'
+                __('tienda.ctrl_admin_producto.product_created_successfully')
             );
     }
 
@@ -145,11 +81,7 @@ class ProductoController extends Controller
         Request $request,
         Producto $producto
     ): RedirectResponse {
-        $datos = $request->validate(
-            $this->reglasValidacion(),
-            $this->mensajesValidacion(),
-            $this->atributosValidacion()
-        );
+        $datos = $request->validate($this->reglasValidacion());
 
         $producto->update($datos);
 
@@ -157,9 +89,7 @@ class ProductoController extends Controller
             ->route('admin.productos.index')
             ->with(
                 'exito',
-                app()->getLocale() === 'en'
-                    ? 'Product updated successfully.'
-                    : 'Producto actualizado correctamente.'
+                __('tienda.ctrl_admin_producto.product_updated_successfully')
             );
     }
 
@@ -172,9 +102,7 @@ class ProductoController extends Controller
             ->route('admin.productos.index')
             ->with(
                 'exito',
-                app()->getLocale() === 'en'
-                    ? 'Product deleted successfully.'
-                    : 'Producto eliminado correctamente.'
+                __('tienda.ctrl_admin_producto.product_deleted_successfully')
             );
     }
 }

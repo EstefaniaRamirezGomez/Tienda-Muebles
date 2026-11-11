@@ -1,72 +1,17 @@
 @extends('layouts.app')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Furniture Comparison'
-    : 'Comparador de muebles'
+@section('titulo', __('tienda.productos_comparar.furniture_comparison')
 )
 
 @section('contenido')
 
-    @php
-        $ingles = app()->getLocale() === 'en';
-
-        // Traducciones básicas para materiales y colores.
-        $traducciones = [
-            'madera' => 'Wood',
-            'metal' => 'Metal',
-            'vidrio' => 'Glass',
-            'plástico' => 'Plastic',
-            'plastico' => 'Plastic',
-            'cuero' => 'Leather',
-            'tela' => 'Fabric',
-            'acero' => 'Steel',
-            'aluminio' => 'Aluminum',
-            'roble' => 'Oak',
-            'pino' => 'Pine',
-            'madera maciza' => 'Solid wood',
-            'acero inoxidable' => 'Stainless steel',
-            'madera y metal' => 'Wood and metal',
-
-            'negro' => 'Black',
-            'blanco' => 'White',
-            'gris' => 'Gray',
-            'azul' => 'Blue',
-            'rojo' => 'Red',
-            'verde' => 'Green',
-            'amarillo' => 'Yellow',
-            'marrón' => 'Brown',
-            'marron' => 'Brown',
-            'beige' => 'Beige',
-            'natural' => 'Natural',
-            'dorado' => 'Gold',
-            'plateado' => 'Silver',
-            'rosado' => 'Pink',
-            'naranja' => 'Orange',
-        ];
-
-        $traducirValor = function ($valor) use ($ingles, $traducciones) {
-            if (is_null($valor) || trim((string) $valor) === '') {
-                return '—';
-            }
-
-            if (!$ingles) {
-                return $valor;
-            }
-
-            $clave = mb_strtolower(trim((string) $valor));
-
-            return $traducciones[$clave] ?? $valor;
-        };
-    @endphp
 
     <h2>
-        ★ {{ $ingles ? 'Furniture Comparison' : 'Comparador de muebles' }}
+        ★ {{ __('tienda.productos_comparar.furniture_comparison') }}
     </h2>
 
     <p>
-        {{ $ingles
-            ? 'Select 2 or 3 products and compare their technical specifications side by side.'
-            : 'Elige entre 2 y 3 productos y compara su ficha técnica lado a lado.' }}
+        {{ __('tienda.productos_comparar.select_2_or_3_products_and') }}
     </p>
 
     {{-- VOLVER AL CATÁLOGO --}}
@@ -75,7 +20,7 @@
             href="{{ route('productos.index') }}"
             class="boton boton-secundario"
         >
-            ← {{ $ingles ? 'Back to Catalog' : 'Volver al catálogo' }}
+            ← {{ __('tienda.productos_comparar.back_to_catalog') }}
         </a>
     </div>
 
@@ -83,9 +28,7 @@
 
         {{-- MENSAJE SI NO HAY SUFICIENTES PRODUCTOS --}}
         <p class="vacio">
-            {{ $ingles
-                ? 'Select at least 2 products from the catalog to compare.'
-                : 'Selecciona al menos 2 productos del catálogo para comparar.' }}
+            {{ __('tienda.productos_comparar.select_at_least_2_products_from') }}
         </p>
 
     @else
@@ -98,7 +41,7 @@
                 {{-- NOMBRES DE PRODUCTOS --}}
                 <tr>
                     <th>
-                        {{ $ingles ? 'Product' : 'Producto' }}
+                        {{ __('tienda.productos_comparar.product') }}
                     </th>
 
                     @foreach ($productos as $producto)
@@ -111,7 +54,7 @@
                 {{-- PRECIO --}}
                 <tr>
                     <th>
-                        {{ $ingles ? 'Price' : 'Precio' }}
+                        {{ __('tienda.productos_comparar.price') }}
                     </th>
 
                     @foreach ($productos as $producto)
@@ -124,12 +67,12 @@
                 {{-- MATERIAL --}}
                 <tr>
                     <th>
-                        {{ $ingles ? 'Material' : 'Material' }}
+                        {{ __('tienda.productos_comparar.material') }}
                     </th>
 
                     @foreach ($productos as $producto)
                         <td>
-                            {{ $traducirValor($producto->especificacion?->material) }}
+                            {{ $producto->especificacion?->material_localizado ?? '—' }}
                         </td>
                     @endforeach
                 </tr>
@@ -137,12 +80,12 @@
                 {{-- COLOR --}}
                 <tr>
                     <th>
-                        {{ $ingles ? 'Color' : 'Color' }}
+                        {{ __('tienda.productos_comparar.color') }}
                     </th>
 
                     @foreach ($productos as $producto)
                         <td>
-                            {{ $traducirValor($producto->especificacion?->color) }}
+                            {{ $producto->especificacion?->color_localizado ?? '—' }}
                         </td>
                     @endforeach
                 </tr>
@@ -150,9 +93,7 @@
                 {{-- DIMENSIONES --}}
                 <tr>
                     <th>
-                        {{ $ingles
-                            ? 'Dimensions (W x H x D)'
-                            : 'Dimensiones (A x Al x P)' }}
+                        {{ __('tienda.productos_comparar.dimensions_w_x_h_x_d') }}
                     </th>
 
                     @foreach ($productos as $producto)
@@ -174,7 +115,7 @@
                 {{-- PESO --}}
                 <tr>
                     <th>
-                        {{ $ingles ? 'Weight' : 'Peso' }}
+                        {{ __('tienda.productos_comparar.weight') }}
                     </th>
 
                     @foreach ($productos as $producto)
@@ -191,9 +132,7 @@
                 {{-- ENSAMBLAJE --}}
                 <tr>
                     <th>
-                        {{ $ingles
-                            ? 'Assembly Required'
-                            : 'Requiere ensamblaje' }}
+                        {{ __('tienda.productos_comparar.assembly_required') }}
                     </th>
 
                     @foreach ($productos as $producto)
@@ -202,8 +141,8 @@
                                 —
                             @else
                                 {{ $producto->especificacion->requiere_ensamblaje
-                                    ? ($ingles ? 'Yes' : 'Sí')
-                                    : ($ingles ? 'No' : 'No') }}
+                                    ? (__('tienda.productos_comparar.yes'))
+                                    : (__('tienda.productos_comparar.no')) }}
                             @endif
                         </td>
                     @endforeach
@@ -212,14 +151,14 @@
                 {{-- GARANTÍA --}}
                 <tr>
                     <th>
-                        {{ $ingles ? 'Warranty' : 'Garantía' }}
+                        {{ __('tienda.productos_comparar.warranty') }}
                     </th>
 
                     @foreach ($productos as $producto)
                         <td>
                             @if (!is_null($producto->especificacion?->garantia_meses))
                                 {{ $producto->especificacion->garantia_meses }}
-                                {{ $ingles ? 'months' : 'meses' }}
+                                {{ __('tienda.productos_comparar.months') }}
                             @else
                                 —
                             @endif
@@ -237,9 +176,7 @@
                 href="{{ route('productos.index') }}"
                 class="boton"
             >
-                {{ $ingles
-                    ? 'Compare Other Products'
-                    : 'Comparar otros productos' }}
+                {{ __('tienda.productos_comparar.compare_other_products') }}
             </a>
         </div>
 

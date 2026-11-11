@@ -1,44 +1,10 @@
 @extends('layouts.admin')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Manage Products'
-    : 'Administrar productos'
+@section('titulo', __('tienda.admin_productos_index.manage_products')
 )
 
 @section('contenido')
 
-    @php
-        $ingles = app()->getLocale() === 'en';
-
-        // Normalizar nombres de categorías y ambientes.
-        $normalizar = function ($valor) {
-            return str_replace(
-                [' ', '-'],
-                '_',
-                \Illuminate\Support\Str::ascii(
-                    mb_strtolower(trim((string) $valor))
-                )
-            );
-        };
-
-        // Traducir categorías y ambientes usando messages.php.
-        $traducirRelacion = function ($nombre, $tipo, $alternativa) use ($normalizar) {
-            if (!$nombre) {
-                return $alternativa;
-            }
-
-            $clave = 'messages.' . $tipo . '.' . $normalizar($nombre);
-
-            return \Illuminate\Support\Facades\Lang::has($clave)
-                ? __($clave)
-                : $nombre;
-        };
-
-        // Mensaje de confirmación según el idioma.
-        $mensajeEliminar = $ingles
-            ? 'Are you sure you want to delete this product? This action cannot be undone.'
-            : '¿Seguro que deseas eliminar este producto? Esta acción no se puede deshacer.';
-    @endphp
 
     {{-- ENCABEZADO --}}
     <div class="encabezado-admin">
@@ -46,13 +12,11 @@
         <div>
 
             <h2>
-                {{ $ingles ? 'Manage Products' : 'Administrar productos' }}
+                {{ __('tienda.admin_productos_index.manage_products') }}
             </h2>
 
             <p>
-                {{ $ingles
-                    ? 'From here you can create, edit, and delete products in the store.'
-                    : 'Desde aquí puedes crear, modificar y eliminar los productos de la tienda.' }}
+                {{ __('tienda.admin_productos_index.from_here_you_can_create_edit') }}
             </p>
 
         </div>
@@ -62,7 +26,7 @@
             href="{{ route('admin.productos.create') }}"
             class="boton"
         >
-            + {{ $ingles ? 'New Product' : 'Nuevo producto' }}
+            + {{ __('tienda.admin_productos_index.new_product') }}
         </a>
 
     </div>
@@ -88,9 +52,7 @@
     @if ($productos->isEmpty())
 
         <p class="vacio">
-            {{ $ingles
-                ? 'No products have been registered yet.'
-                : 'No hay productos registrados.' }}
+            {{ __('tienda.admin_productos_index.no_products_have_been_registered_yet') }}
         </p>
 
     @else
@@ -105,31 +67,31 @@
                     <tr>
 
                         <th>
-                            {{ $ingles ? 'Image' : 'Imagen' }}
+                            {{ __('tienda.admin_productos_index.image') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Product' : 'Producto' }}
+                            {{ __('tienda.admin_productos_index.product') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Category' : 'Categoría' }}
+                            {{ __('tienda.admin_productos_index.category') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Room' : 'Ambiente' }}
+                            {{ __('tienda.admin_productos_index.room') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Price' : 'Precio' }}
+                            {{ __('tienda.admin_productos_index.price') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Stock' : 'Stock' }}
+                            {{ __('tienda.admin_productos_index.stock') }}
                         </th>
 
                         <th>
-                            {{ $ingles ? 'Actions' : 'Acciones' }}
+                            {{ __('tienda.admin_productos_index.actions') }}
                         </th>
 
                     </tr>
@@ -145,18 +107,10 @@
                             $nombreProducto = $producto->nombre_localizado;
 
                             // Categoría localizada.
-                            $categoriaTraducida = $traducirRelacion(
-                                $producto->categoria?->nombre,
-                                'categories',
-                                $ingles ? 'No category' : 'Sin categoría'
-                            );
+                            $categoriaTraducida = $producto->categoria?->nombre_localizado ?? __('tienda.admin_productos_index.no_category');
 
                             // Ambiente localizado.
-                            $ambienteTraducido = $traducirRelacion(
-                                $producto->ambiente?->nombre,
-                                'rooms',
-                                $ingles ? 'No room' : 'Sin ambiente'
-                            );
+                            $ambienteTraducido = $producto->ambiente?->nombre_localizado ?? __('tienda.admin_productos_index.no_room');
                         @endphp
 
                         <tr>
@@ -211,7 +165,7 @@
                                     href="{{ route('admin.productos.edit', $producto) }}"
                                     class="boton"
                                 >
-                                    {{ $ingles ? 'Edit' : 'Editar' }}
+                                    {{ __('tienda.admin_productos_index.edit') }}
                                 </a>
 
                                 {{-- ELIMINAR --}}
@@ -219,7 +173,7 @@
                                     action="{{ route('admin.productos.destroy', $producto) }}"
                                     method="POST"
                                     style="display:inline;"
-                                    onsubmit="return confirm(@js($mensajeEliminar));"
+                                    onsubmit="return confirm(@js(__('tienda.admin_productos_index.are_you_sure_you_want_to')));"
                                 >
 
                                     @csrf
@@ -229,7 +183,7 @@
                                         type="submit"
                                         class="boton boton-eliminar"
                                     >
-                                        {{ $ingles ? 'Delete' : 'Eliminar' }}
+                                        {{ __('tienda.admin_productos_index.delete') }}
                                     </button>
 
                                 </form>

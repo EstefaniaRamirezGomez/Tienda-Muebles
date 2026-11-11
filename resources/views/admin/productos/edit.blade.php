@@ -1,26 +1,19 @@
 @extends('layouts.admin')
 
-@section('titulo', app()->getLocale() === 'en'
-    ? 'Edit Product'
-    : 'Editar producto'
+@section('titulo', __('tienda.admin_productos_edit.edit_product')
 )
 
 @section('contenido')
 
-    @php
-        $ingles = app()->getLocale() === 'en';
-    @endphp
 
     {{-- ENCABEZADO --}}
 
     <h2>
-        {{ $ingles ? 'Edit Product' : 'Editar producto' }}
+        {{ __('tienda.admin_productos_edit.edit_product') }}
     </h2>
 
     <p>
-        {{ $ingles
-            ? 'Update the information of the product:'
-            : 'Modifica la información del producto:' }}
+        {{ __('tienda.admin_productos_edit.update_the_information_of_the_product') }}
 
         <strong>
             {{ $producto->nombre_localizado }}
@@ -40,9 +33,7 @@
             @method('PUT')
 
             @include('admin.productos._form', [
-                'textoBoton' => $ingles
-                    ? 'Save Changes'
-                    : 'Guardar cambios'
+                'textoBoton' => __('tienda.admin_productos_edit.save_changes')
             ])
 
         </form>

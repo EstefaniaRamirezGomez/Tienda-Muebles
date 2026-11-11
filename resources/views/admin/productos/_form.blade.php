@@ -1,33 +1,11 @@
-@php
-    $ingles = app()->getLocale() === 'en';
 
-    // Normaliza los nombres para buscar sus traducciones.
-    $normalizar = function ($valor) {
-        return str_replace(
-            [' ', '-'],
-            '_',
-            \Illuminate\Support\Str::ascii(
-                mb_strtolower(trim((string) $valor))
-            )
-        );
-    };
-
-    // Traduce categorías y ambientes si existe una traducción.
-    $traducirRelacion = function ($nombre, $tipo) use ($normalizar) {
-        $clave = 'messages.' . $tipo . '.' . $normalizar($nombre);
-
-        return \Illuminate\Support\Facades\Lang::has($clave)
-            ? __($clave)
-            : $nombre;
-    };
-@endphp
 
 {{-- NOMBRE DEL PRODUCTO --}}
 
 <div class="campo">
 
     <label for="nombre">
-        {{ $ingles ? 'Product Name' : 'Nombre del producto' }}
+        {{ __('tienda.admin_productos__form.product_name') }}
     </label>
 
     <input
@@ -49,7 +27,7 @@
 <div class="campo">
 
     <label for="descripcion">
-        {{ $ingles ? 'Description' : 'Descripción' }}
+        {{ __('tienda.admin_productos__form.description') }}
     </label>
 
     <textarea
@@ -70,7 +48,7 @@
 <div class="campo">
 
     <label for="imagen">
-        {{ $ingles ? 'Image URL' : 'URL de la imagen' }}
+        {{ __('tienda.admin_productos__form.image_url') }}
     </label>
 
     <input
@@ -92,7 +70,7 @@
 <div class="campo">
 
     <label for="precio">
-        {{ $ingles ? 'Price' : 'Precio' }}
+        {{ __('tienda.admin_productos__form.price') }}
     </label>
 
     <input
@@ -116,7 +94,7 @@
 <div class="campo">
 
     <label for="stock">
-        {{ $ingles ? 'Available Stock' : 'Stock disponible' }}
+        {{ __('tienda.admin_productos__form.available_stock') }}
     </label>
 
     <input
@@ -139,7 +117,7 @@
 <div class="campo">
 
     <label for="categoria_id">
-        {{ $ingles ? 'Category' : 'Categoría' }}
+        {{ __('tienda.admin_productos__form.category') }}
     </label>
 
     <select
@@ -149,7 +127,7 @@
     >
 
         <option value="">
-            {{ $ingles ? 'Select a category' : 'Seleccione una categoría' }}
+            {{ __('tienda.admin_productos__form.select_a_category') }}
         </option>
 
         @foreach ($categorias as $categoria)
@@ -163,7 +141,7 @@
                     ) == $categoria->id
                 )
             >
-                {{ $traducirRelacion($categoria->nombre, 'categories') }}
+                {{ $categoria->nombre_localizado }}
             </option>
 
         @endforeach
@@ -181,7 +159,7 @@
 <div class="campo">
 
     <label for="ambiente_id">
-        {{ $ingles ? 'Room' : 'Ambiente' }}
+        {{ __('tienda.admin_productos__form.room') }}
     </label>
 
     <select
@@ -191,7 +169,7 @@
     >
 
         <option value="">
-            {{ $ingles ? 'Select a room' : 'Seleccione un ambiente' }}
+            {{ __('tienda.admin_productos__form.select_a_room') }}
         </option>
 
         @foreach ($ambientes as $ambiente)
@@ -205,7 +183,7 @@
                     ) == $ambiente->id
                 )
             >
-                {{ $traducirRelacion($ambiente->nombre, 'rooms') }}
+                {{ $ambiente->nombre_localizado }}
             </option>
 
         @endforeach

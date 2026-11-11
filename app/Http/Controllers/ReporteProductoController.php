@@ -4,8 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Contracts\ReporteProductoInterface;
 use App\Models\Producto;
-use App\Services\ReporteProductosCsv;
-use App\Services\ReporteProductosJson;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,8 +11,7 @@ class ReporteProductoController extends Controller
 {
     public function __construct(
         private readonly ReporteProductoInterface $reporte
-    ) {
-    }
+    ) {}
 
     public function descargar(Request $request): Response
     {
@@ -23,19 +20,15 @@ class ReporteProductoController extends Controller
         abort_unless(
             in_array($formato, ['csv', 'json'], true),
             422,
-            'Formato de reporte no válido.'
+            __('tienda.ctrl_reporte.formato_invalido')
         );
 
         $productos = Producto::with('categoria')
             ->orderBy('nombre')
             ->get();
 
-        // La interfaz permite trabajar con ambos generadores.
-        $generador = $formato === 'json'
-            ? app(ReporteProductosJson::class)
-            : $this->reporte;
-
-        return $generador->generar($productos);
+        // La clase concreta (CSV o JSON) la inyecta el contenedor
+        // según el binding definido en AppServiceProvider.
+        return $this->reporte->generar($productos);
     }
 }
-

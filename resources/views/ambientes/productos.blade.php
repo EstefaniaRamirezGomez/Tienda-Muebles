@@ -1,76 +1,27 @@
 @extends('layouts.app')
 
-@php
-    $ingles = app()->getLocale() === 'en';
 
-    // Traducciones de los ambientes
-    $traduccionesAmbientes = [
-        'cocina' => 'Kitchen',
-        'dormitorio' => 'Bedroom',
-        'exterior' => 'Outdoor',
-        'oficina' => 'Office',
-        'sala' => 'Living Room',
-        'comedor' => 'Dining Room',
-        'baño' => 'Bathroom',
-        'terraza' => 'Terrace',
-        'jardín' => 'Garden',
-        'estudio' => 'Study',
-    ];
-
-    // Traducciones de las categorías
-    $traduccionesCategorias = [
-        'sofás' => 'Sofas',
-        'sofá' => 'Sofa',
-        'mesas' => 'Tables',
-        'mesa' => 'Table',
-        'sillas' => 'Chairs',
-        'silla' => 'Chair',
-        'lámparas' => 'Lamps',
-        'lámpara' => 'Lamp',
-        'camas' => 'Beds',
-        'cama' => 'Bed',
-        'escritorios' => 'Desks',
-        'escritorio' => 'Desk',
-        'decoración' => 'Decoration',
-        'muebles' => 'Furniture',
-        'accesorios' => 'Accessories',
-    ];
-
-    // Nombre localizado del ambiente
-    $nombreAmbienteOriginal = $ambiente->nombre;
-
-    $claveAmbiente = mb_strtolower(
-        trim($nombreAmbienteOriginal)
-    );
-
-    $nombreAmbiente = $ingles
-        ? ($traduccionesAmbientes[$claveAmbiente] ?? $nombreAmbienteOriginal)
-        : $nombreAmbienteOriginal;
-@endphp
-
-@section('titulo', $nombreAmbiente)
+@section('titulo', $ambiente->nombre_localizado)
 
 @section('contenido')
 
     {{-- Volver a todos los ambientes --}}
     <a href="{{ route('ambientes.index') }}">
         &larr;
-        {{ $ingles ? 'All Rooms' : 'Todos los ambientes' }}
+        {{ __('tienda.ambientes_productos.all_rooms') }}
     </a>
 
     {{-- Título --}}
     <h2>
-        {{ $ingles ? 'Furniture for:' : 'Muebles para:' }}
-        {{ $nombreAmbiente }}
+        {{ __('tienda.ambientes_productos.furniture_for') }}
+        {{ $ambiente->nombre_localizado }}
     </h2>
 
     {{-- Sin productos --}}
     @if ($productos->isEmpty())
 
         <p class="vacio">
-            {{ $ingles
-                ? 'There are no products for this room yet.'
-                : 'Todavía no hay productos para este ambiente.' }}
+            {{ __('tienda.ambientes_productos.there_are_no_products_for_this') }}
         </p>
 
     @endif
@@ -85,9 +36,7 @@
         @if ($productos->isNotEmpty())
 
             <p class="vacio">
-                {{ $ingles
-                    ? 'Select 2 or 3 products to compare their technical specifications.'
-                    : 'Marca entre 2 y 3 productos para comparar su ficha técnica.' }}
+                {{ __('tienda.ambientes_productos.select_2_or_3_products_to') }}
             </p>
 
         @endif
@@ -101,15 +50,7 @@
                     $nombreProducto = $producto->nombre_localizado;
 
                     // Categoría traducida
-                    $nombreCategoriaOriginal = $producto->categoria?->nombre ?? '';
-
-                    $claveCategoria = mb_strtolower(
-                        trim($nombreCategoriaOriginal)
-                    );
-
-                    $nombreCategoria = $ingles
-                        ? ($traduccionesCategorias[$claveCategoria] ?? $nombreCategoriaOriginal)
-                        : $nombreCategoriaOriginal;
+                    $nombreCategoria = $producto->categoria?->nombre_localizado ?? '';
                 @endphp
 
                 <div class="producto-card">
@@ -132,7 +73,7 @@
                             class="check-comparar"
                         >
 
-                        {{ $ingles ? 'Compare' : 'Comparar' }}
+                        {{ __('tienda.ambientes_productos.compare') }}
 
                     </label>
 
@@ -174,7 +115,7 @@
                         href="{{ route('productos.show', $producto) }}"
                         class="boton"
                     >
-                        {{ $ingles ? 'View Details' : 'Ver detalle' }}
+                        {{ __('tienda.ambientes_productos.view_details') }}
                     </a>
 
                 </div>
@@ -193,9 +134,7 @@
                 id="btn-comparar"
                 disabled
             >
-                {{ $ingles
-                    ? 'Compare Selected Products'
-                    : 'Comparar seleccionados' }}
+                {{ __('tienda.ambientes_productos.compare_selected_products') }}
             </button>
 
         @endif
