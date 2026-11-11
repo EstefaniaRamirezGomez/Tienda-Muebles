@@ -9,46 +9,39 @@
 
     $estados = [
         'pendiente' => [
-            'es' => 'Pendiente',
-            'en' => 'Pending',
+            'etiqueta' => __('tienda.estados.pendiente'),
             'color' => '#92400e',
             'fondo' => '#fef3c7',
         ],
         'preparando' => [
-            'es' => 'En preparación',
-            'en' => 'Preparing',
+            'etiqueta' => __('tienda.estados.preparando'),
             'color' => '#1d4ed8',
             'fondo' => '#dbeafe',
         ],
         'en_preparacion' => [
-            'es' => 'En preparación',
-            'en' => 'Preparing',
+            'etiqueta' => __('tienda.estados.en_preparacion'),
             'color' => '#1d4ed8',
             'fondo' => '#dbeafe',
         ],
         'enviado' => [
-            'es' => 'Enviado',
-            'en' => 'Shipped',
+            'etiqueta' => __('tienda.estados.enviado'),
             'color' => '#6d28d9',
             'fondo' => '#ede9fe',
         ],
         'entregado' => [
-            'es' => 'Entregado',
-            'en' => 'Delivered',
+            'etiqueta' => __('tienda.estados.entregado'),
             'color' => '#166534',
             'fondo' => '#dcfce7',
         ],
         'cancelado' => [
-            'es' => 'Cancelado',
-            'en' => 'Cancelled',
+            'etiqueta' => __('tienda.estados.cancelado'),
             'color' => '#991b1b',
             'fondo' => '#fee2e2',
         ],
     ];
 
     $estadoActual = $estados[$pedido->estado] ?? [
-        'es' => ucfirst($pedido->estado),
-        'en' => ucfirst($pedido->estado),
+        'etiqueta' => ucfirst($pedido->estado),
         'color' => '#374151',
         'fondo' => '#f3f4f6',
     ];
@@ -87,6 +80,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="mensaje-error">
+            {{ session('error') }}
+        </div>
+    @endif
+
     {{-- ENCABEZADO --}}
     <h1>
         {{ __('tienda.pedidos_show.order_details') }}
@@ -120,7 +119,7 @@
                 border-radius: 20px;
                 font-weight: bold;
             ">
-                {{ $estadoActual[__('tienda.pedidos_show.en')] }}
+                {{ $estadoActual['etiqueta'] }}
             </span>
         </p>
 
@@ -307,6 +306,9 @@
         </p>
 
     </section>
+
+    {{-- CERTIFICADO BLOCKCHAIN --}}
+    @include('certificados._seccion')
 
     {{-- ACCIONES --}}
     <div style="

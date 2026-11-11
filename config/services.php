@@ -35,10 +35,11 @@ return [
         ],
     ],
 
-    // Servicio JSON del equipo aliado (Entregable 2).
-    'aliado' => [
-        'url' => env('SERVICIO_ALIADO_URL'),
-        'nombre' => env('SERVICIO_ALIADO_NOMBRE'),
+    // Servicio de blockchain del equipo anterior (Entregable 2):
+    // emite y verifica certificados de autenticidad de los pedidos.
+    'blockchain' => [
+        'url' => env('BLOCKCHAIN_URL'),
+        'timeout' => env('BLOCKCHAIN_TIMEOUT', 30),
     ],
 
 ];

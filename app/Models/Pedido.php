@@ -17,11 +17,16 @@ class Pedido extends Model
         'direccion_envio',
         'ciudad_envio',
         'telefono_contacto',
+        'certificado_serial',
+        'certificado_hash',
+        'certificado_bloque',
+        'certificado_emitido_en',
     ];
 
     protected $casts = [
         'fecha' => 'date',
         'total' => 'decimal:2',
+        'certificado_emitido_en' => 'datetime',
     ];
 
     /**
@@ -72,5 +77,13 @@ class Pedido extends Model
         $this->update([
             'estado' => $estado,
         ]);
+    }
+
+    /**
+     * Indica si el pedido ya tiene certificado en la blockchain.
+     */
+    public function estaCertificado(): bool
+    {
+        return $this->certificado_hash !== null;
     }
 }

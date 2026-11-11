@@ -397,11 +397,6 @@
                 {{ __('messages.featured') }}
             </a>
 
-            {{-- PRODUCTOS ALIADOS --}}
-            <a href="{{ route('aliados.index') }}">
-                {{ __('tienda.aliados.menu') }}
-            </a>
-
             @auth
 
                 @php

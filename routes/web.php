@@ -9,8 +9,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\InicioController;
 use App\Http\Controllers\ProductoController;
 use App\Http\Controllers\CarritoController;
+use App\Http\Controllers\CertificadoController;
 use App\Http\Controllers\PedidoController;
-use App\Http\Controllers\ProductoAliadoController;
 use App\Http\Controllers\ReporteProductoController;
 use Illuminate\Support\Facades\Route;
 
@@ -46,11 +46,13 @@ Route::prefix('productos')
     });
 
 // ===============================
-// PRODUCTOS ALIADOS (servicio del equipo anterior)
+// CERTIFICADOS (servicio blockchain del equipo anterior)
 // ===============================
 
-Route::get('/productos-aliados', [ProductoAliadoController::class, 'index'])
-    ->name('aliados.index');
+// Verificación pública de un certificado de autenticidad
+Route::get('/certificados/{hash}', [CertificadoController::class, 'verificar'])
+    ->where('hash', '[A-Fa-f0-9]{64}')
+    ->name('certificados.verificar');
 
 // ===============================
 // AMBIENTES
@@ -143,6 +145,10 @@ Route::middleware('auth')
         // Consultar detalles y seguimiento
         Route::get('/{pedido}', [PedidoController::class, 'show'])
             ->name('show');
+
+        // Certificar el pedido en la blockchain del equipo aliado
+        Route::post('/{pedido}/certificar', [CertificadoController::class, 'certificar'])
+            ->name('certificar');
     });
 
 // ===============================

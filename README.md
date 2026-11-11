@@ -93,8 +93,9 @@ Usuario final:
 - `/productos/destacados` - Más vendidos y mejor calificados
 - `/productos/comparar` - Comparación de productos
 - `/ambientes` - Productos organizados por ambientes
-- `/productos-aliados` - Productos del equipo aliado (servicio consumido)
+- `/certificados/{hash}` - Verificación pública de un certificado blockchain (servicio consumido)
 - `/carrito` y `/pedidos` - Compra simulada e historial (requiere sesión)
+- `POST /pedidos/{id}/certificar` - Certifica un pedido en la blockchain del equipo aliado
 
 Administrador (`/admin`, requiere rol admin):
 
@@ -129,7 +130,7 @@ Ejemplo de respuesta:
 
 ## Servicios que consumimos
 
-- **Equipo aliado:** su servicio JSON se muestra en `/productos-aliados`. La URL se configura en `.env` con `SERVICIO_ALIADO_URL` (y opcionalmente `SERVICIO_ALIADO_NOMBRE`). Si el servicio no responde, la página muestra un aviso en lugar de un error.
+- **Equipo aliado (blockchain):** consumimos su servicio de certificados de autenticidad. En el detalle de cada pedido hay un botón "Certificar en blockchain": la app calcula el hash SHA-256 canónico del pedido, lo registra con `POST /transactions/new` y sella el bloque con `POST /mine`. La página `/certificados/{hash}` consulta `GET /verify/{hash}` y `GET /status`, muestra el resultado y además compara el hash con los datos actuales del pedido. La URL se configura en `.env` con `BLOCKCHAIN_URL`. Implementado en `app/Services/CertificadoBlockchainService.php` y `app/Http/Controllers/CertificadoController.php`. Si el servicio no responde, la tienda muestra un aviso y sigue funcionando.
 - **MyMemory (servicio de un tercero):** API de traducción usada para traducir automáticamente al inglés el nombre y la descripción de los productos al guardarlos (`app/Services/TraduccionService.php`).
 
 ## Inversión de dependencias
